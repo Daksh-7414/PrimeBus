@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "243729078478",
+    "firebase_url": "https://primebus-23f1c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "primebus-23f1c",
+    "storage_bucket": "primebus-23f1c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:243729078478:android:e7c94b3527b47a3bbfd89f",
+        "android_client_info": {
+          "package_name": "com.example.primebus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "243729078478-89oot8ceoen2bu0jrei4i0o38aevj892.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.primebus",
+            "certificate_hash": "7577752d29a3096c6f3f9bd295a2f2f3370929fc"
+          }
+        },
+        {
+          "client_id": "243729078478-ereucrleof6anfeu270kdp479u8fihir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD74cZuc4Zy37ahN2NvMGEPJ6WRRKZu31Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "243729078478-ereucrleof6anfeu270kdp479u8fihir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

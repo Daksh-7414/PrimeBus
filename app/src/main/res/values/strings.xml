@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">PrimeBus</string>
+    <string name="back">Back</string>
+    <string name="select_seats">Select Seats</string>
+    <string name="route">ROUTE</string>
+    <string name="schedule">SCHEDULE</string>
+    <string name="available">Available</string>
+    <string name="selected">Selected</string>
+    <string name="booked">Booked</string>
+    <string name="ladies">Ladies</string>
+    <string name="front">FRONT</string>
+    <string name="default_web_client_id">243729078478-ereucrleof6anfeu270kdp479u8fihir.apps.googleusercontent.com</string>
+</resources>

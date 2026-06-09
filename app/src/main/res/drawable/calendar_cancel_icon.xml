@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+
+    <!-- Calendar outline – thicker stroke (2.5) for boldness -->
+    <path
+        android:fillColor="#000000"
+        android:strokeColor="#000000"
+        android:strokeWidth="0.2"
+        android:pathData="m9,2a1,1 0,0 0,-1 1v1h-2c-2.199,0 -4,1.801 -4,4v18c0,2.199 1.801,4 4,4h20c2.199,0 4,-1.801 4,-4v-18c0,-2.199 -1.801,-4 -4,-4h-2v-1a1,1 0,0 0,-1 -1,1 1,0 0,0 -1,1v1h-5v-1a1,1 0,0 0,-1 -1,1 1,0 0,0 -1,1v1h-5v-1a1,1 0,0 0,-1 -1zM6,6h2v1a1,1 0,0 0,1 1,1 1,0 0,0 1,-1v-1h5v1a1,1 0,0 0,1 1,1 1,0 0,0 1,-1v-1h5v1a1,1 0,0 0,1 1,1 1,0 0,0 1,-1v-1h2c1.125,0 2,0.875 2,2v2L4,10v-2c0,-1.125 0.875,-2 2,-2zM4,12h24v14c0,1.125 -0.875,2 -2,2L6,28c-1.125,0 -2,-0.875 -2,-2z" />
+
+    <!-- Bolder X: two crossing stroked lines (no fill) with rounded caps -->
+    <path android:fillColor="#000000" android:strokeColor="#000000"
+        android:strokeWidth="1" android:pathData="m20.707,15.293a1,1 0,0 0,-1.414 0L16,18.586 12.708,15.293a1,1 0,0 0,-1.414 0,1 1,0 0,0 0,1.414L14.586,20 11.293,23.292a1,1 0,0 0,0 1.414,1 1,0 0,0 1.414,0L16,21.414l3.292,3.292a1,1 0,0 0,1.414 0,1 1,0 0,0 0,-1.414L17.414,20 20.707,16.708a1,1 0,0 0,0 -1.414z"/>
+
+</vector>
