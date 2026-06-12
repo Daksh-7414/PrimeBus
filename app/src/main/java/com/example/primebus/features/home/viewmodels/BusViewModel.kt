@@ -20,6 +20,19 @@ class BusViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<BusUiState>(BusUiState.Loading)
     val uiState = _uiState.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
+    fun refreshBuses(routeId: String) {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+
+            fetchBuses(routeId)
+
+            _isRefreshing.value = false
+        }
+    }
+
     fun fetchBuses(routeId: String) {
         viewModelScope.launch {
             repository.getBusesByRoute(routeId)
@@ -36,7 +49,7 @@ class BusViewModel @Inject constructor(
 
                         is AppResult.Error -> {
                             _uiState.value = BusUiState.Error(
-                                    result.message
+                                result.message
                             )
                         }
 

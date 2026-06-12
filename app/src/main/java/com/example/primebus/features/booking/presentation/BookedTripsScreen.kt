@@ -44,11 +44,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.primebus.BookedTripsUiState
+import com.example.primebus.PullToRefreshLazyColumn
 import com.example.primebus.R
 import com.example.primebus.core.navigation.appnavigation.NavRoutes
 import com.example.primebus.features.booking.viewmodels.BookedTripsViewModel
 import com.example.primebus.features.home.presentation.AppLoadingScreen
-import com.example.primebus.features.home.presentation.BookedListItem
 import com.example.primebus.features.home.presentation.NoInternetCard
 
 @Composable
@@ -57,9 +57,11 @@ fun BookedTripsScreen(
     viewModel: BookedTripsViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-    Column {
-        TripToolBar(onBackClick = {})
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    Column(modifier = Modifier.fillMaxSize()) {
+        TripToolBar(
+            onBackClick = { viewModel.refresh() }
+        )
 
         when (val state = uiState) {
 
@@ -68,56 +70,86 @@ fun BookedTripsScreen(
             }
 
             BookedTripsUiState.Empty -> {
-                NoBookedTripsAvailableCard()
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refresh() },
+                    modifier     = Modifier.weight(1f)
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize()) {
+                            NoBookedTripsAvailableCard()
+                        }
+                    }
+                }
             }
 
             BookedTripsUiState.NoInternet -> {
-                NoInternetCard()
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refresh() },
+                    modifier     = Modifier.weight(1f)
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize()) {
+                            NoInternetCard()
+                        }
+                    }
+                }
             }
 
             is BookedTripsUiState.Error -> {
-//                ErrorScreen(
-//                    message = state.message
-//                )
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refresh() },
+                    modifier     = Modifier.weight(1f)
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize()) {
+                            // ErrorCard(state.message)
+                        }
+                    }
+                }
             }
 
             is BookedTripsUiState.Success -> {
 
-                Column(
-                    modifier = Modifier.fillMaxSize()
+//                Column(
+//                    modifier = Modifier.fillMaxSize()
+//                ) {
+
+                if (state.isOffline) {
+                    OfflineBanner()
+                }
+
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refresh() },
+                    modifier     = Modifier
+                        .weight(1f)
+                        .background(Color(0xFFE2E8F0))
                 ) {
+                    items(
+                        items = state.trips,
+                        key = { it.booking.bookingId }
+                    ) { trip ->
 
-                    if (state.isOffline) {
-                        OfflineBanner()
+                        BookedListItem(
+                            booking = trip.booking,
+                            bus = trip.bus,
+                            navController = navController,
+                            onViewSeatsClick = {
+                                viewModel.selectTrip(trip)
+                                navController.navigate(
+                                    NavRoutes.TicketCard.route
+                                )
+                            }
+                        )
                     }
-
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color(0xFFE2E8F0))
-                    ) {
-                        items(
-                            items = state.trips,
-                            key = { it.booking.bookingId }
-                        ) { trip ->
-
-                            BookedListItem(
-                                booking = trip.booking,
-                                bus = trip.bus,
-                                navController = navController,
-                                onViewSeatsClick = {
-                                    viewModel.selectTrip(trip)
-                                    navController.navigate(
-                                        NavRoutes.TicketCard
-                                    )
-                                }
-                            )
-                        }
-                        item {
-                            ContactPage()
-                        }
+                    item {
+                        ContactPage()
                     }
                 }
+//                }
             }
         }
     }

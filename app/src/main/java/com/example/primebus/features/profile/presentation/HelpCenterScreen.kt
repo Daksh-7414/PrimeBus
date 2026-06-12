@@ -281,28 +281,28 @@ fun QuickHelpOption(
             .clip(RoundedCornerShape(20.dp))
             .background(Color.White)
             .padding(16.dp)
-        ){
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(Color(0xFFDCE1FF),
+    ){
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color(0xFFDCE1FF),
                     RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(icon),
-                    contentDescription = "Icon",
-                    tint = Color(0xFF00236F),
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = title,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = FontFamily(Font(R.font.inter))
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = "Icon",
+                tint = Color(0xFF00236F),
+                modifier = Modifier.size(20.dp)
             )
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = title,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.inter))
+        )
 
 
     }

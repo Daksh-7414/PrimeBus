@@ -22,7 +22,7 @@
 //import com.example.primebus.features.booking.presentation.BookedTripsScreen
 //import com.example.primebus.features.booking.presentation.BookingSuccessScreen
 //import com.example.primebus.features.booking.presentation.BusTicketCard
-//import com.example.primebus.features.booking.presentation.CheckoutScreen
+//import com.example.primebus.features.home.presentation.CheckoutScreen
 //import com.example.primebus.features.home.presentation.BusScreen
 //import com.example.primebus.features.home.presentation.BusSeatScreen
 //import com.example.primebus.features.home.presentation.HomeScreen

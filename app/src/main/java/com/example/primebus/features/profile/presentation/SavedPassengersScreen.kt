@@ -252,7 +252,7 @@ fun AddPassengerBottomSheet(
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.inter))
-                )
+            )
 
             Spacer(Modifier.height(8.dp))
 
@@ -262,7 +262,7 @@ fun AddPassengerBottomSheet(
                 fontWeight = FontWeight.Normal,
                 color = Color.Gray,
                 fontFamily = FontFamily(Font(R.font.inter))
-                )
+            )
 
             Spacer(Modifier.height(16.dp))
 
@@ -309,7 +309,7 @@ fun AddPassengerBottomSheet(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
                 fontFamily = FontFamily(Font(R.font.inter))
-                )
+            )
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 

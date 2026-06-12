@@ -14,6 +14,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DirectionsBusFilled
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.primebus.R
+import com.example.primebus.core.utils.Constants.convenienceFee
+import com.example.primebus.core.utils.Constants.gst
 import com.example.primebus.data.models.Booking
 import com.example.primebus.data.models.Bus
 import com.example.primebus.data.models.Passenger
@@ -50,7 +54,7 @@ fun BusTicketCard(
     onBackClick: () -> Unit
 ) {
     val trip by viewModel.selectedTrip.collectAsState()
-    
+
     trip?.let { bookedTrip ->
         BusTicketCardContent(
             bus = bookedTrip.bus,
@@ -73,459 +77,459 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
         ) {
             item {
 
-                    Column(
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+                {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                            .size(50.dp)
+                            .background(Color(0xFFD1FAE5), CircleShape),
+                        contentAlignment = Alignment.Center
                     )
                     {
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .background(Color(0xFFD1FAE5), CircleShape),
-                            contentAlignment = Alignment.Center
-                        )
-                        {
-                            Icon(
-                                painter = painterResource(R.drawable.confirmed_icon),
-                                contentDescription = "Icon",
-                                modifier = Modifier.size(30.dp),
-                                tint = Color(0xFF059669)
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            "Booking Confirmed",
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            fontSize = 19.sp,
-                            fontFamily = FontFamily(Font(R.font.inter))
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            "Your ticket has been successfully booked",
-                            fontWeight = FontWeight.Medium,
-                            textAlign = TextAlign.Center,
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily(Font(R.font.inter))
+                        Icon(
+                            painter = painterResource(R.drawable.confirmed_icon),
+                            contentDescription = "Icon",
+                            modifier = Modifier.size(30.dp),
+                            tint = Color(0xFF059669)
                         )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        "Booking Confirmed",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        fontSize = 19.sp,
+                        fontFamily = FontFamily(Font(R.font.inter))
                     )
-                    {
-                        Column(
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        "Your ticket has been successfully booked",
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                        color = Color.Black,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.inter))
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
+                )
+                {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        // Bus name,type
+
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(Color.White),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            // Bus name,type
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top
-                            )
-                            {
-                                Column {
-                                    Text(
-                                        text = bus.busName,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = Color(0xFF00236F),
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = bus.type,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.End,
-                                    modifier = Modifier
-                                        .background(Color(0xFFECFDF5), RoundedCornerShape(20.dp))
-                                        .border(
-                                            BorderStroke(1.dp, Color(0xFF8EFFB0)),
-                                            RoundedCornerShape(20.dp)
-                                        )
-                                        .padding(6.dp)
-                                ) {
-                                    Text(
-                                        text = "CONFIRMED",
-                                        fontSize = 13.sp,
-                                        color = Color(0xFF16A34A),
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
-                            }
-
-                            // Route
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            )
-                            {
-                                Column(
-                                    horizontalAlignment = Alignment.Start,
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        "FROM",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                    Text(
-                                        bus.source,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    modifier = Modifier
-                                        .wrapContentWidth()
-                                ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        DashedHorizontalLine()
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Icon(
-                                            imageVector = Icons.Outlined.DirectionsBusFilled,
-                                            contentDescription = "Icon",
-                                            tint = Color(0xFF712AE2),
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        DashedHorizontalLine()
-                                    }
-                                }
-                                Column(
-                                    horizontalAlignment = Alignment.End,
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        "TO",
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                    Text(
-                                        bus.destination,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.height(10.dp))
-
-                            // Date
-                            Row(
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFFEEF4FC))
-                                    .padding(10.dp, 6.dp)
-                            )
-                            {
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Top
+                        )
+                        {
+                            Column {
                                 Text(
-                                    text = booking.journeyDate?.let { millis ->
-                                        SimpleDateFormat("EEE, dd MMM yyyy", Locale.ENGLISH).apply {
-                                            timeZone = TimeZone.getTimeZone("UTC")
-                                        }.format(Date(millis))
-                                    } ?: "Date not available",
+                                    text = bus.busName,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = Color(0xFF00236F),
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = bus.type,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                            }
+                            Column(
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier
+                                    .background(Color(0xFFDAFBE8), RoundedCornerShape(20.dp))
+                                    .border(
+                                        BorderStroke(1.dp, Color(0xFF287145)),
+                                        RoundedCornerShape(20.dp)
+                                    )
+                                    .padding(10.dp,5.dp)
+                            ) {
+                                Text(
+                                    text = "CONFIRMED",
                                     fontSize = 13.sp,
+                                    color = Color(0xFF287145),
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                            }
+                        }
+
+                        // Route
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        )
+                        {
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    "FROM",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                                Text(
+                                    bus.source,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                            }
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    DashedHorizontalLine(65.dp)
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Icon(
+                                        imageVector = Icons.Outlined.DirectionsBusFilled,
+                                        contentDescription = "Icon",
+                                        tint = Color(0xFF712AE2),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    DashedHorizontalLine(65.dp)
+                                }
+                            }
+                            Column(
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    "TO",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                                Text(
+                                    bus.destination,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // Date
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFEEF4FC))
+                                .padding(10.dp, 6.dp)
+                        )
+                        {
+                            Text(
+                                text = booking.journeyDate?.let { millis ->
+                                    SimpleDateFormat("EEE, dd MMM yyyy", Locale.ENGLISH).apply {
+                                        timeZone = TimeZone.getTimeZone("UTC")
+                                    }.format(Date(millis))
+                                } ?: "Date not available",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black,
+                                fontFamily = FontFamily(Font(R.font.inter))
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        // Departure & Arrival & Duration
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFEEF4FC))
+                                .padding(10.dp)
+                        )
+                        {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "DEPARTURE",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                                Text(
+                                    text = bus.departureTime,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF00236F),
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                            }
+                            VerticalDivider(
+                                modifier = Modifier.height(50.dp).background(Color.LightGray)
+                            )
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "DURATION",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
+                                )
+                                Text(
+                                    bus.duration,
+                                    fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Black,
                                     fontFamily = FontFamily(Font(R.font.inter))
                                 )
                             }
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            // Departure & Arrival & Duration
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .background(Color(0xFFEEF4FC))
-                                    .padding(10.dp)
+                            VerticalDivider(
+                                modifier = Modifier.height(50.dp).background(Color.LightGray)
                             )
-                            {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        "DEPARTURE",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                    Text(
-                                        text = bus.departureTime,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF00236F),
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
-                                VerticalDivider(
-                                    modifier = Modifier.height(50.dp).background(Color.LightGray)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    "ARRIVAL",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.DarkGray,
+                                    fontFamily = FontFamily(Font(R.font.inter))
                                 )
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        "DURATION",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                    Text(
-                                        bus.duration,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.Black,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
-                                VerticalDivider(
-                                    modifier = Modifier.height(50.dp).background(Color.LightGray)
+                                Text(
+                                    bus.arrivalTime,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF712AE2),
+                                    fontFamily = FontFamily(Font(R.font.inter))
                                 )
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text(
-                                        "ARRIVAL",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.DarkGray,
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                    Text(
-                                        bus.arrivalTime,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF712AE2),
-                                        fontFamily = FontFamily(Font(R.font.inter))
-                                    )
-                                }
                             }
+                        }
 
-                            Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
 
-                            // ----- Dashed Divider (simple full width) -----
-                            DashedDivider()
+                        // ----- Dashed Divider (simple full width) -----
+                        DashedDivider()
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
 //                RouteTimeline()
-                            Row(
-                                modifier = Modifier,
-                                verticalAlignment = Alignment.CenterVertically
-                            )
-                            {
-                                Spacer(modifier = Modifier.width(12.dp))
-                                RouteTimeline()
-                                Column() {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(12.dp, 16.dp, 16.dp, 16.dp)
-                                            .clip(RoundedCornerShape(20.dp))
-                                            .background(Color(0xFFEEF4FC))
-                                            .padding(16.dp, 10.dp, 10.dp, 10.dp)
-                                    )
-                                    {
-                                        Column(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalAlignment = Alignment.Start
-                                        ) {
-                                            Text(
-                                                "BOARDING POINT • ${bus.departureTime} REPORTING",
-                                                fontSize = 11.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color(0xFF00236F),
-                                                fontFamily = FontFamily(Font(R.font.inter))
-                                            )
-                                            Text(
-                                                bus.boardingPoint,
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.Black,
-                                                fontFamily = FontFamily(Font(R.font.inter))
-                                            )
-                                        }
+                        Row(
+                            modifier = Modifier,
+                            verticalAlignment = Alignment.CenterVertically
+                        )
+                        {
+                            Spacer(modifier = Modifier.width(12.dp))
+                            RouteTimeline()
+                            Column() {
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp, 16.dp, 16.dp, 16.dp)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color(0xFFEEF4FC))
+                                        .padding(16.dp, 10.dp, 10.dp, 10.dp)
+                                )
+                                {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.Start
+                                    ) {
+                                        Text(
+                                            "BOARDING POINT • ${bus.departureTime} REPORTING",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF00236F),
+                                            fontFamily = FontFamily(Font(R.font.inter))
+                                        )
+                                        Text(
+                                            bus.boardingPoint,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.Black,
+                                            fontFamily = FontFamily(Font(R.font.inter))
+                                        )
                                     }
+                                }
 
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceAround,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(start = 12.dp)
-                                            .padding(end = 16.dp)
-                                            .padding(top = 4.dp)
-                                            .padding(bottom = 20.dp)
-                                            .clip(RoundedCornerShape(20.dp))
-                                            .background(Color(0xFFEEF4FC))
-                                            .padding(16.dp, 10.dp, 10.dp, 10.dp)
-                                    )
-                                    {
-                                        Column(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalAlignment = Alignment.Start
-                                        ) {
-                                            Text(
-                                                "DROPPING POINT • ${bus.arrivalTime} ARRIVAL",
-                                                fontSize = 11.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color(0xFF712AE2),
-                                                fontFamily = FontFamily(Font(R.font.inter))
-                                            )
-                                            Text(
-                                                bus.droppingPoint,
-                                                fontSize = 16.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = Color.Black,
-                                                fontFamily = FontFamily(Font(R.font.inter))
-                                            )
-                                        }
+                                Row(
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 12.dp)
+                                        .padding(end = 16.dp)
+                                        .padding(top = 4.dp)
+                                        .padding(bottom = 20.dp)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(Color(0xFFEEF4FC))
+                                        .padding(16.dp, 10.dp, 10.dp, 10.dp)
+                                )
+                                {
+                                    Column(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalAlignment = Alignment.Start
+                                    ) {
+                                        Text(
+                                            "DROPPING POINT • ${bus.arrivalTime} ARRIVAL",
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF712AE2),
+                                            fontFamily = FontFamily(Font(R.font.inter))
+                                        )
+                                        Text(
+                                            bus.droppingPoint,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color.Black,
+                                            fontFamily = FontFamily(Font(R.font.inter))
+                                        )
                                     }
                                 }
                             }
                         }
-
                     }
 
-                    PassengerDetails(booking.passengers)
+                }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp)
-                            .clip(RoundedCornerShape(25.dp))
-                            .background(Color(0xFFEEF4FC))
-                            .padding(20.dp)
+                PassengerDetails(booking.passengers)
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 6.dp)
+                        .clip(RoundedCornerShape(25.dp))
+                        .background(Color(0xFFEEF4FC))
+                        .padding(16.dp)
+                )
+                {
+                    Text(
+                        text = "Fare Summary",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        modifier = Modifier.fillMaxWidth(),
+                        fontFamily = FontFamily(Font(R.font.inter))
+                    )
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
                     )
                     {
                         Text(
-                            text = "Fare Summary",
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                            modifier = Modifier.fillMaxWidth(),
+                            text = "Base Fare",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.DarkGray,
+                            fontSize = 15.sp,
                             fontFamily = FontFamily(Font(R.font.inter))
                         )
-                        Spacer(modifier = Modifier.height(14.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
+                        Text(
+                            text = "₹${booking.totalAmount - gst - convenienceFee}",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_bold))
                         )
-                        {
-                            Text(
-                                text = "Base Fare",
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.DarkGray,
-                                fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(R.font.inter))
-                            )
-                            Text(
-                                text = "₹${booking.totalAmount}",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(R.font.poppins_bold))
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        {
-                            Text(
-                                text = "GST & Taxes",
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.DarkGray,
-                                fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(R.font.inter))
-                            )
-                            Text(
-                                text = "₹24.00",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(R.font.poppins_bold))
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        {
-                            Text(
-                                text = "Convenience Fees",
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.DarkGray,
-                                fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(R.font.inter))
-                            )
-                            Text(
-                                text = "₹20.00",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                fontSize = 15.sp,
-                                fontFamily = FontFamily(Font(R.font.poppins_bold))
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(10.dp))
-                        HorizontalDivider(
-                            thickness = 0.6.dp,
-                            modifier = Modifier.padding(horizontal = 1.dp)
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        {
-                            Text(
-                                text = "Total Paid",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.Black,
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily(Font(R.font.inter))
-                            )
-                            Text(
-                                text = "₹${booking.totalAmount + 24 + 20}",
-                                color = Color(0xFF3F51B5),
-                                fontSize = 16.sp,
-                                fontFamily = FontFamily(Font(R.font.poppins_bold))
-                            )
-                        }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    {
+                        Text(
+                            text = "GST & Taxes",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.DarkGray,
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.inter))
+                        )
+                        Text(
+                            text = gst.toString(),
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_bold))
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    {
+                        Text(
+                            text = "Convenience Fees",
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.DarkGray,
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.inter))
+                        )
+                        Text(
+                            text = convenienceFee.toString(),
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 15.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_bold))
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    HorizontalDivider(
+                        thickness = 0.6.dp,
+                        modifier = Modifier.padding(horizontal = 1.dp)
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    {
+                        Text(
+                            text = "Total Paid",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.inter))
+                        )
+                        Text(
+                            text = "₹${booking.totalAmount}",
+                            color = Color(0xFF3F51B5),
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.poppins_bold))
+                        )
+                    }
+                }
             }
         }
     }
@@ -574,11 +578,11 @@ fun StopCircle(
 }
 
 @Composable
-fun DashedHorizontalLine() {
+fun DashedHorizontalLine(width: Dp) {
     Canvas(
         modifier = Modifier
             .height(2.dp)
-            .width(65.dp)
+            .width(width)
     ) {
         val dashWidth = 10f
         val gap = 6f
@@ -623,7 +627,8 @@ fun DashedVerticalLine() {
 fun BookedToolbar(
     routeString : String,
     onBackClick: () -> Unit,
-    onEditClick: () -> Unit = {}
+    onEditClick: () -> Unit = {},
+    onDownloadClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -657,6 +662,13 @@ fun BookedToolbar(
 
             )
         }
+        IconButton(onClick = onDownloadClick) {
+            Icon(
+                imageVector = Icons.Outlined.Download, // Add an icon to your resources
+                contentDescription = "Download PDF",
+                modifier = Modifier.size(24.dp)
+            )
+        }
     }
 }
 
@@ -667,16 +679,26 @@ fun PassengerDetails(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 16.dp)
+            .padding(top = 16.dp, bottom = 10.dp)
     ) {
 
-        Text(
-            text = "Passenger Details",
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
-            fontFamily = FontFamily(Font(R.font.inter))
-        )
+        Row {
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                imageVector = Icons.Outlined.Group,
+                contentDescription = "Icon",
+                tint = Color(0xFF00236F),
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Passenger Details",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+                fontFamily = FontFamily(Font(R.font.inter))
+            )
+        }
 
         Spacer(modifier = Modifier.height(14.dp))
 
@@ -686,8 +708,7 @@ fun PassengerDetails(
                 index = index,
                 passenger = passenger
             )
-
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
@@ -705,67 +726,67 @@ fun PassengeCard(
         modifier = Modifier.fillMaxWidth()
     ) {
 
-            // 🔹 Header
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+        // 🔹 Header
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
 
-                Box(
-                    modifier = Modifier
-                        .size(35.dp)
-                        .background(Color(0xFFADEFC6), CircleShape),
-                    contentAlignment = Alignment.Center
+            Box(
+                modifier = Modifier
+                    .size(35.dp)
+                    .background(Color(0xFFADEFC6), CircleShape),
+                contentAlignment = Alignment.Center
+            )
+            {
+                Text(
+                    text = "DS",
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
                 )
-                {
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Row(modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween) {
+                Column() {
                     Text(
-                        text = "DS",
+                        text = passenger.name,
+                        fontWeight = FontWeight.Bold,
                         color = Color.Black,
-                        fontWeight = FontWeight.Bold
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.inter))
+                    )
+                    Text(
+                        text = "${passenger.gender}, ${passenger.age} Yrs",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.inter))
                     )
                 }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Row(modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column() {
-                        Text(
-                            text = passenger.name,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.inter))
-                        )
-                        Text(
-                            text = "${passenger.gender}, ${passenger.age} Yrs",
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color.Gray,
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily(Font(R.font.inter))
-                        )
-                    }
-                    Column(
-                        modifier = Modifier.padding(end = 8.dp),
-                        horizontalAlignment = Alignment.End) {
-                        Text(
-                            text = "SEAT NO.",
-                            fontWeight = FontWeight.Bold,
-                            color = Color.DarkGray,
-                            fontSize = 12.sp,
-                            fontFamily = FontFamily(Font(R.font.inter))
-                        )
-                        Text(
-                            text = passenger.seatNumber,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF712ae2),
-                            fontSize = 18.sp,
-                            fontFamily = FontFamily(Font(R.font.inter))
-                        )
-                    }
+                Column(
+                    modifier = Modifier.padding(end = 8.dp),
+                    horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "SEAT NO.",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.DarkGray,
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.inter))
+                    )
+                    Text(
+                        text = passenger.seatNumber,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF712ae2),
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.inter))
+                    )
                 }
             }
+        }
     }
 }
 // ========== Reusable Components ==========

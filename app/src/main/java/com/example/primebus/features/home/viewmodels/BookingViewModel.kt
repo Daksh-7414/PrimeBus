@@ -3,6 +3,8 @@ package com.example.primebus.features.home.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.primebus.core.utils.Constants.convenienceFee
+import com.example.primebus.core.utils.Constants.gst
 import com.example.primebus.data.models.Booking
 import com.example.primebus.data.models.Bus
 import com.example.primebus.data.models.Passenger
@@ -129,7 +131,7 @@ class BookingViewModel @Inject constructor(
             busId_date = "${bus.busId}_${dateStr}",
             seats = _selectedSeats.value.map { it.seatNumber },
             passengers = _passengers.value,
-            totalAmount = _selectedSeats.value.size * bus.price,
+            totalAmount = _selectedSeats.value.size * bus.price + gst + convenienceFee,
             status = "CONFIRMED",
             timestamp = System.currentTimeMillis(),
             contactPhone = _contactPhone.value,

@@ -231,7 +231,7 @@ fun OTPScreenContent(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                             .background( brush = gradientBrush,
-                        shape = RoundedCornerShape(16.dp) )
+                                shape = RoundedCornerShape(16.dp) )
                     ) {
                         Text(
                             text = "Verify & Continue",

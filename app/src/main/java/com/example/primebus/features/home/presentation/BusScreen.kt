@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +23,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.primebus.BusUiState
+import com.example.primebus.PullToRefreshLazyColumn
 import com.example.primebus.R
 import com.example.primebus.core.navigation.appnavigation.NavRoutes
 import com.example.primebus.features.home.viewmodels.BookingViewModel
@@ -56,6 +59,7 @@ fun BusScreen(
 ) {
     val tripRequest by bookingViewModel.tripRequest.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
 
     Log.d("BusScreen", "tripRequest = $tripRequest")
 
@@ -75,7 +79,11 @@ fun BusScreen(
         }
     }
 
-    Column {
+    /*
+    Column(
+        modifier = Modifier.fillMaxSize()
+    )
+    {
         TripToolbar(
             from = from,
             to = to,
@@ -93,13 +101,30 @@ fun BusScreen(
             }
 
             BusUiState.NoInternet -> {
-                NoInternetCard()
+                PullToRefreshBox(
+                    modifier = Modifier.weight(1f),
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        Log.d("REFRESH", "Refresh Called")
+                        viewModel.refreshBuses(
+                            bookingViewModel.journeyRouteId
+                        )
+                    }
+                ) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        item {
+                            NoInternetCard()
+                        }
+                    }
+                }
             }
 
             is BusUiState.Error -> {
                 //ErrorScreen(state.message)
             }
-
+            /*
             is BusUiState.Success -> {
                 val buses = state.buses
                 LazyColumn(
@@ -119,6 +144,123 @@ fun BusScreen(
                                 navController.navigate(
                                     NavRoutes.Seat.route
                                 )
+                            }
+                        )
+                    }
+                }
+            }
+            */
+            is BusUiState.Success -> {
+
+                PullToRefreshLazyColumn(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(Color(0xFFF5F8FE)),
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        viewModel.refreshBuses(
+                            bookingViewModel.journeyRouteId
+                        )
+                    }
+                ) {
+
+                    items(
+                        items = state.buses,
+                        key = { it.busId }
+                    ) { bus ->
+
+                        BusListItem(
+                            bus = bus,
+                            onViewSeatsClick = { selectedBus ->
+                                bookingViewModel.selectBus(selectedBus)
+                                navController.navigate(NavRoutes.Seat.route)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+    */
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        TripToolbar(
+            from        = from,
+            to          = to,
+            dateString  = formattedDate,
+            onBackClick = { navController.popBackStack() }
+        )
+
+        when (val state = uiState) {
+
+            // ── First load — no content yet, show spinner only ────────────────
+            // No pull-to-refresh here — user hasn't seen anything yet
+            BusUiState.Loading -> {
+                AppLoadingScreen("Loading buses...")
+            }
+
+            // ── Empty + No internet + Error — single card, pull to retry ──────
+            // fillParentMaxSize() fills the LazyColumn's visible area correctly
+            BusUiState.Empty -> {
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refreshBuses(bookingViewModel.journeyRouteId) },
+                    modifier     = Modifier.weight(1f)
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize()) {
+                            NoBusAvailableCard()
+                        }
+                    }
+                }
+            }
+
+            BusUiState.NoInternet -> {
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refreshBuses(bookingViewModel.journeyRouteId) },
+                    modifier     = Modifier.weight(1f)
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize()) {
+                            NoInternetCard()
+                        }
+                    }
+                }
+            }
+
+            is BusUiState.Error -> {
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refreshBuses(bookingViewModel.journeyRouteId) },
+                    modifier     = Modifier.weight(1f)
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillParentMaxSize()) {
+                            // ErrorCard(state.message)
+                        }
+                    }
+                }
+            }
+
+            // ── Success — bus list with pull-to-refresh ───────────────────────
+            is BusUiState.Success -> {
+                PullToRefreshLazyColumn(
+                    isRefreshing = isRefreshing,
+                    onRefresh    = { viewModel.refreshBuses(bookingViewModel.journeyRouteId) },
+                    modifier     = Modifier
+                        .weight(1f)
+                        .background(Color(0xFFF5F8FE))
+                ) {
+                    items(
+                        items = state.buses,
+                        key   = { it.busId }
+                    ) { bus ->
+                        BusListItem(
+                            bus             = bus,
+                            onViewSeatsClick = { selectedBus ->
+                                bookingViewModel.selectBus(selectedBus)
+                                navController.navigate(NavRoutes.Seat.route)
                             }
                         )
                     }
@@ -165,7 +307,7 @@ fun TripToolbar(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
                 tint = Color(0xFF00236E),
-                modifier = Modifier.size(28.dp)
+                modifier = Modifier.size(30.dp)
             )
         }
         Column(
@@ -178,7 +320,7 @@ fun TripToolbar(
             Text(
                 text = "$from to $to",
                 fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 color = Color(0xFF00226B),
                 fontFamily = FontFamily(Font(R.font.inter))
             )
@@ -219,7 +361,7 @@ fun NoBusAvailableCard() {
 fun NoInternetCard() {
     Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxHeight()
             .background(Color(0xFFEFF2F7)),
         contentAlignment = Alignment.Center
     ) {

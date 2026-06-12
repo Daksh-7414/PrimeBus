@@ -226,7 +226,7 @@ fun InviteEarnCard(
                 fontSize = 14.sp,
                 color = Color(0xFF475569),
 
-            )
+                )
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
