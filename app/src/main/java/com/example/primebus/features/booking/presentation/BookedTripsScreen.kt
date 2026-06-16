@@ -72,8 +72,8 @@ fun BookedTripsScreen(
             BookedTripsUiState.Empty -> {
                 PullToRefreshLazyColumn(
                     isRefreshing = isRefreshing,
-                    onRefresh    = { viewModel.refresh() },
-                    modifier     = Modifier.weight(1f)
+                    onRefresh = { viewModel.refresh() },
+                    modifier = Modifier.weight(1f)
                 ) {
                     item {
                         Box(modifier = Modifier.fillParentMaxSize()) {
@@ -86,8 +86,8 @@ fun BookedTripsScreen(
             BookedTripsUiState.NoInternet -> {
                 PullToRefreshLazyColumn(
                     isRefreshing = isRefreshing,
-                    onRefresh    = { viewModel.refresh() },
-                    modifier     = Modifier.weight(1f)
+                    onRefresh = { viewModel.refresh() },
+                    modifier = Modifier.weight(1f)
                 ) {
                     item {
                         Box(modifier = Modifier.fillParentMaxSize()) {
@@ -100,8 +100,8 @@ fun BookedTripsScreen(
             is BookedTripsUiState.Error -> {
                 PullToRefreshLazyColumn(
                     isRefreshing = isRefreshing,
-                    onRefresh    = { viewModel.refresh() },
-                    modifier     = Modifier.weight(1f)
+                    onRefresh = { viewModel.refresh() },
+                    modifier = Modifier.weight(1f)
                 ) {
                     item {
                         Box(modifier = Modifier.fillParentMaxSize()) {
@@ -112,19 +112,13 @@ fun BookedTripsScreen(
             }
 
             is BookedTripsUiState.Success -> {
-
-//                Column(
-//                    modifier = Modifier.fillMaxSize()
-//                ) {
-
                 if (state.isOffline) {
                     OfflineBanner()
                 }
-
                 PullToRefreshLazyColumn(
                     isRefreshing = isRefreshing,
-                    onRefresh    = { viewModel.refresh() },
-                    modifier     = Modifier
+                    onRefresh = { viewModel.refresh() },
+                    modifier = Modifier
                         .weight(1f)
                         .background(Color(0xFFE2E8F0))
                 ) {
@@ -132,7 +126,6 @@ fun BookedTripsScreen(
                         items = state.trips,
                         key = { it.booking.bookingId }
                     ) { trip ->
-
                         BookedListItem(
                             booking = trip.booking,
                             bus = trip.bus,
@@ -149,7 +142,6 @@ fun BookedTripsScreen(
                         ContactPage()
                     }
                 }
-//                }
             }
         }
     }
@@ -304,49 +296,4 @@ private fun OfflineBannerPreview() {
 private fun ToolbarPreview() {
     TripToolBar(onBackClick = {})
 }
-
-/*
-// ─────────────────────────────────────────────────────────────────────────────
-// Empty state — different message when offline vs online
-// ─────────────────────────────────────────────────────────────────────────────
-//@Composable
-//fun EmptyBookingsView(isOffline: Boolean) {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color(0xFFE2E8F0)),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        Column(
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//            modifier = Modifier.padding(32.dp)
-//        ) {
-//            Text(
-//                text = if (isOffline) "No cached bookings" else "No bookings yet",
-//                fontSize = 18.sp,
-//                fontWeight = FontWeight.Bold,
-//                color = Color(0xFF00236F),
-//                fontFamily = FontFamily(Font(R.font.inter))
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Text(
-//                text = if (isOffline)
-//                    "Connect to the internet to load your bookings."
-//                else
-//                    "Your confirmed trips will appear here.",
-//                fontSize = 14.sp,
-//                color = Color(0xFF64748B),
-//                textAlign = TextAlign.Center,
-//                lineHeight = 20.sp,
-//                fontFamily = FontFamily(Font(R.font.inter))
-//            )
-//        }
-//    }
-//}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Contact card
-// ─────────────────────────────────────────────────────────────────────────────
-
- */
 

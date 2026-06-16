@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ import com.example.primebus.data.models.SeatUIModel
 import com.example.primebus.data.models.TripRequest
 import com.example.primebus.features.home.viewmodels.BookingViewModel
 import com.example.primebus.features.home.viewmodels.SeatViewModel
+import com.example.primebus.ui.theme.gradientBrush
 import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -205,29 +207,7 @@ fun BusSeatContent(
             }
 
             is SeatUiState.Error -> {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .height(300.dp), Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(24.dp)
-                    ) {
-                        Text(
-                            uiState.message, fontSize = 14.sp,
-                            color = Color(0xFFB00020), fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        Button(
-                            onClick = onRetryClick,
-                            shape = RoundedCornerShape(12.dp),
-                            colors = ButtonDefaults.buttonColors(Color(0xFF3D3BC4))
-                        ) {
-                            Text("Retry")
-                        }
-                    }
-                }
+                SeatErrorCard(uiState, onRetryClick)
             }
 
             is SeatUiState.Empty -> {
@@ -393,9 +373,10 @@ fun BusSeatContent(
                     Button(
                         onClick = { onProceedClick(uiState.seatUIModels) },
                         enabled = selectedCount > 0,
-                        modifier = Modifier.weight(1.5f),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(Color(0xFF3D3BC4)),
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .background(gradientBrush, RoundedCornerShape(16.dp)),
+                        colors = ButtonDefaults.buttonColors(Color.Transparent),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
                     ) {
                         Text(
@@ -423,6 +404,51 @@ private fun NoSeatAvailableCardPreview() {
     NoSeatAvailableCard()
 }
 
+
+@Composable
+fun SeatErrorCard(
+    uiState: SeatUiState,
+    onRetryClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(24.dp)
+        ) {
+
+            Text(
+                text = if (uiState is SeatUiState.Error)
+                    uiState.message
+                else
+                    "Something went wrong",
+                fontSize = 14.sp,
+                color = Color(0xFFB00020),
+                fontWeight = FontWeight.SemiBold,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onRetryClick,
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF3D3BC4)
+                )
+            ) {
+                Text(
+                    text = "Retry",
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
 @Composable
 fun NoSeatAvailableCard() {
     Box(

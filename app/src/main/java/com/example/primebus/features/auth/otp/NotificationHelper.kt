@@ -16,10 +16,7 @@ object NotificationHelper {
         otp: String
     ) {
         val channelId = "otp_channel"
-
-        val manager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE)
-                    as NotificationManager
+        val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             manager.createNotificationChannel(

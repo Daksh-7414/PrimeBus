@@ -37,7 +37,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.outlined.Logout
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -79,8 +78,8 @@ fun ProfileScreen(navController: NavHostController,onLogOut: () -> Unit) {
             ProfileSection(
                 "SUPPORT",
                 listOf(
-                    MenuItemData("Help Center", R.drawable.help_center_icon,NavRoutes.HelpCenter),
-                    MenuItemData("Contact Support", R.drawable.contact_support_icon, NavRoutes.ContactSupport),
+                    MenuItemData("Help Center", R.drawable.help_center_icon,NavRoutes.Help),
+                    MenuItemData("Customer Support", R.drawable.contact_support_icon, NavRoutes.CustomerSupport),
                     MenuItemData("Refund Policy", R.drawable.refund_policy_icon, NavRoutes.RefundPolicy)
                 )
             ),
@@ -95,7 +94,9 @@ fun ProfileScreen(navController: NavHostController,onLogOut: () -> Unit) {
         )
     }
     Column() {
-        ProfileToolBar(onBackClick = {})
+        ProfileToolBar(onBackClick = {
+            navController.navigate(NavRoutes.Notifications.route)
+        })
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -146,7 +147,17 @@ fun ProfileScreen(navController: NavHostController,onLogOut: () -> Unit) {
                     sectionTitle = section.title,
                     items = section.items,
                     onItemClick = { item ->
-                        navController.navigate(item.destination.route)
+                        if (item.destination == NavRoutes.Help) {
+                            navController.navigate(NavRoutes.Help.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                restoreState = true
+                                launchSingleTop = true
+                            }
+                        } else {
+                            navController.navigate(item.destination.route)
+                        }
                     }
                 )
                 Spacer(modifier = Modifier.height(12.dp))

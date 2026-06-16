@@ -18,8 +18,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -30,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
+import com.example.primebus.ui.theme.gradientBrush
 
 @Preview(showBackground = true)
 @Composable
@@ -233,14 +232,6 @@ fun TermsConditionsScreen(navController: NavHostController) {
                 }
             }
             item {
-                val gradientBrush  = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF0D247C), // dark blue
-                        Color(0xFF6F3BD5)  // purple
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()

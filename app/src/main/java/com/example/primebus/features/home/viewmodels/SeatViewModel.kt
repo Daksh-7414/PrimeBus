@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.primebus.AppResult
 import com.example.primebus.SeatUiState
+import com.example.primebus.core.utils.Constants.LOCK_DURATION_MS
 import com.example.primebus.data.models.SeatModel
 import com.example.primebus.data.models.SeatStatus
 import com.example.primebus.data.models.SeatUIModel
@@ -129,25 +130,25 @@ class SeatViewModel @Inject constructor(
     }
 
     private fun recomputeAndEmit() {
-        val layout   = _layout.value
-        val booked   = _bookedSeats.value
+        val layout = _layout.value
+        val booked = _bookedSeats.value
 
         if (layout.isNotEmpty() && layout.size == booked.size) {
             _uiState.value = SeatUiState.Empty
             return
         }
 
-        val locked   = _lockedByOthers.value
+        val locked = _lockedByOthers.value
         val selected = _selectedSeats.value
 
         val uiModels = layout.map { seat ->
             SeatUIModel(
-                seat   = seat,
+                seat = seat,
                 status = when {
                     selected.contains(seat.seatNumber) -> SeatStatus.SELECTED
-                    booked.contains(seat.seatNumber)   -> SeatStatus.BOOKED
-                    locked.contains(seat.seatNumber)   -> SeatStatus.LOCKED
-                    else                               -> SeatStatus.AVAILABLE
+                    booked.contains(seat.seatNumber) -> SeatStatus.BOOKED
+                    locked.contains(seat.seatNumber) -> SeatStatus.LOCKED
+                    else -> SeatStatus.AVAILABLE
                 }
             )
         }
@@ -168,8 +169,7 @@ class SeatViewModel @Inject constructor(
                 seatRepository.releaseSeatLock(currentBusId, currentDateStr, seatNumber)
             }
         } else {
-            if (_bookedSeats.value.contains(seatNumber) ||
-                _lockedByOthers.value.contains(seatNumber)) return
+            if (_bookedSeats.value.contains(seatNumber) || _lockedByOthers.value.contains(seatNumber)) return
 
             viewModelScope.launch {
                 val userId = firebaseAuth.currentUser?.uid ?: return@launch
@@ -190,7 +190,7 @@ class SeatViewModel @Inject constructor(
     private fun startLockTimer(seatNumber: String) {
         lockTimerJobs[seatNumber]?.cancel()
         lockTimerJobs[seatNumber] = viewModelScope.launch {
-            delay(SeatRepository.LOCK_DURATION_MS)
+            delay(LOCK_DURATION_MS)
             if (_selectedSeats.value.contains(seatNumber)) {
                 _selectedSeats.value = _selectedSeats.value - seatNumber
                 seatRepository.releaseSeatLock(currentBusId, currentDateStr, seatNumber)

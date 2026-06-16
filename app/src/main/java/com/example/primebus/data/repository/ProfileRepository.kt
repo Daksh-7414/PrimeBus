@@ -8,72 +8,45 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(
-
     private val firebaseAuth: FirebaseAuth,
-
-    @UserRef
-    private val userRef: DatabaseReference
-
+    @UserRef private val userRef: DatabaseReference
 ) {
 
-    suspend fun saveUserProfile(
-        userModel: UserModel
-    ): Result<Unit> {
+    fun getCurrentUserEmail(): String {
+        return firebaseAuth.currentUser?.email ?: ""
+    }
 
+    suspend fun saveUserProfile(userModel: UserModel): Result<Unit> {
         return try {
-
-            val uid = firebaseAuth.currentUser?.uid
-                ?: return Result.failure(
-                    Exception("User not logged in")
-                )
-
+            val uid = firebaseAuth.currentUser?.uid ?: return Result.failure(Exception("User not logged in"))
             val finalUser = userModel.copy(
                 userId = uid
             )
-
             userRef
                 .child(uid)
                 .setValue(finalUser)
                 .await()
-
             Result.success(Unit)
-
         } catch (e: Exception) {
-
             Result.failure(e)
         }
     }
 
     suspend fun getUserProfile(): Result<UserModel> {
-
         return try {
-
-            val uid = firebaseAuth.currentUser?.uid
-                ?: return Result.failure(
-                    Exception("User not logged in")
-                )
-
+            val uid = firebaseAuth.currentUser?.uid ?: return Result.failure(Exception("User not logged in"))
             val snapshot = userRef
                 .child(uid)
                 .get()
                 .await()
-
-            val user = snapshot
-                .getValue(UserModel::class.java)
-
-            if (user != null) {
-
-                Result.success(user)
-
-            } else {
-
-                Result.failure(
-                    Exception("Profile not found")
+            val user = snapshot.getValue(UserModel::class.java)
+            Result.success(
+                user ?: UserModel(
+                    userId = uid,
+                    email = getCurrentUserEmail()
                 )
-            }
-
+            )
         } catch (e: Exception) {
-
             Result.failure(e)
         }
     }

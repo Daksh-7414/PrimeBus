@@ -36,6 +36,7 @@ import java.util.Calendar
 import java.util.Date
 import androidx.compose.ui.platform.LocalLocale
 import com.example.primebus.data.models.TripRequest
+import com.example.primebus.ui.theme.gradientBrush
 import java.util.TimeZone
 
 val InterFont = FontFamily(
@@ -159,7 +160,6 @@ fun LocationInputField(
     }
 }
 
-// Home Screen UI
 @Composable
 fun BusSearchSection(
     cityList: List<String>,
@@ -254,9 +254,7 @@ fun BusSearchSection(
 
             Button(
                 onClick = {
-
                     showValidation = true
-
                     if (
                         source.isBlank() ||
                         destination.isBlank() ||
@@ -264,7 +262,6 @@ fun BusSearchSection(
                     ) {
                         return@Button
                     }
-
                     if (
                         source.trim().equals(
                             destination.trim(),
@@ -278,7 +275,6 @@ fun BusSearchSection(
                         ).show()
                         return@Button
                     }
-
                     onSearchClick(
                         TripRequest(
                             from = source.trim(),
@@ -289,10 +285,10 @@ fun BusSearchSection(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(55.dp),
-                shape = RoundedCornerShape(16.dp),
+                    .height(55.dp)
+                    .background(gradientBrush, shape = RoundedCornerShape(16.dp)),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF3D3BC4)
+                    containerColor = Color.Transparent
                 )
             ) {
                 Icon(
@@ -374,10 +370,10 @@ fun DatePickerModal(
     }
 }
 
-// HOME SCREEN
 @Composable
 fun HomeScreen(
-    onSearchClick: (TripRequest) -> Unit  // Changed to accept TripRequest
+    onSearchClick: (TripRequest) -> Unit ,
+    onNotificationClick: () -> Unit
 ) {
     val cityList = listOf(
         "Jaipur", "Ajmer", "Kota"
@@ -412,27 +408,28 @@ fun HomeScreen(
                             color = Color.Gray
                         )
                     }
-                    Icon(
-                        imageVector = Icons.Outlined.Notifications,
-                        contentDescription = "Notification",
-                        modifier = Modifier.size(28.dp)
-                    )
+                    IconButton(onClick = onNotificationClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Notifications,
+                            contentDescription = "Notification",
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 BusSearchSection(
                     cityList = cityList,
-                    onSearchClick = onSearchClick  // Pass through the callback
+                    onSearchClick = onSearchClick
                 )
             }
         }
     }
 }
 
-// PREVIEW
 @Preview(showBackground = true)
 @Composable
 fun PreviewHome() {
-    HomeScreen(onSearchClick = { _ -> })
+    HomeScreen(onSearchClick = { _ -> },{})
 }

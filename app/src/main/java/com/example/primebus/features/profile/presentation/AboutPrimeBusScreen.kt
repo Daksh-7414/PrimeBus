@@ -1,6 +1,5 @@
 package com.example.primebus.features.profile.presentation
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

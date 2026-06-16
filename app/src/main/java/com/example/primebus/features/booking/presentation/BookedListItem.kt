@@ -1,8 +1,6 @@
 package com.example.primebus.features.booking.presentation
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,11 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AirlineSeatReclineExtra
-import androidx.compose.material.icons.outlined.AirlineSeatReclineNormal
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.DirectionsBusFilled
-import androidx.compose.material.icons.rounded.AirlineSeatReclineNormal
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.ConfirmationNumber
 import androidx.compose.material.icons.rounded.DirectionsBusFilled
@@ -51,6 +44,7 @@ import com.example.primebus.R
 import com.example.primebus.data.models.BookedTripUiModel
 import com.example.primebus.data.models.Booking
 import com.example.primebus.data.models.Bus
+import com.example.primebus.ui.theme.gradientBrush
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -134,7 +128,6 @@ fun BookedListItem(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                // Left column – pinned to the left edge
                 Column(
                     modifier = Modifier.align(Alignment.CenterStart),
                     horizontalAlignment = Alignment.Start
@@ -154,8 +147,6 @@ fun BookedListItem(
                         fontFamily = FontFamily(Font(R.font.inter))
                     )
                 }
-
-                // Middle duration indicator – perfectly centered
                 Row(
                     modifier = Modifier.align(Alignment.Center),
                     verticalAlignment = Alignment.CenterVertically
@@ -172,8 +163,6 @@ fun BookedListItem(
                     Spacer(modifier = Modifier.width(8.dp))
                     DashedHorizontalLine(30.dp)
                 }
-
-                // Right column – pinned to the right edge
                 Column(
                     modifier = Modifier.align(Alignment.CenterEnd),
                     horizontalAlignment = Alignment.End
@@ -202,7 +191,6 @@ fun BookedListItem(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                // Seat Chip
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -230,7 +218,6 @@ fun BookedListItem(
                     )
                 }
 
-                // Bus Type Chip
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -261,12 +248,10 @@ fun BookedListItem(
                     )
                 }
 
-                // Fare Chip
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .weight(1f)
-
                         .background(
                             Color(0xFFE2F4E9),
                             RoundedCornerShape(12.dp)
@@ -295,7 +280,7 @@ fun BookedListItem(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(15.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -326,14 +311,14 @@ fun BookedListItem(
                     )
                 }
                 */
-//                Spacer(modifier = Modifier.width(12.dp))
                 Button(
                     onClick = {onViewSeatsClick()},
                     modifier = Modifier
-                        .height(40.dp).wrapContentWidth(),
-                    shape = RoundedCornerShape(12.dp),
+                        .height(40.dp)
+                        .wrapContentWidth()
+                        .background(gradientBrush, RoundedCornerShape(12.dp)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF3D3BC4)
+                        containerColor = Color.Transparent
                     )
                 ) {
                     Icon(
@@ -359,9 +344,7 @@ fun BookedListItem(
 @Preview(showBackground = true)
 @Composable
 fun BookedListItemPreview() {
-
     val navController = rememberNavController()
-
     val mockTrip = BookedTripUiModel(
         booking = Booking(
             userId = "USER1",
@@ -388,7 +371,6 @@ fun BookedListItemPreview() {
             droppingPoint = "Jaipur"
         )
     )
-
     BookedListItem(
         booking = mockTrip.booking,
         bus = mockTrip.bus,

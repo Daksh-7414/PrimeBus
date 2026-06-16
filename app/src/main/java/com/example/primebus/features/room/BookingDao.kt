@@ -19,10 +19,6 @@ interface BookingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBuses(buses: List<Bus>)
 
-    // ─── @Relation on BookedTripUiModel means Room auto-fetches the Bus
-    // for each Booking row. No raw JOIN SQL needed here.
-    // @Transaction is REQUIRED with @Relation — ensures both tables are
-    // read in the same transaction (prevents torn reads).
     @Transaction
     @Query("SELECT * FROM bookings ORDER BY timestamp DESC")
     fun getBookingsWithBus(): Flow<List<BookedTripUiModel>>

@@ -54,25 +54,21 @@ class ProfileViewModel @Inject constructor(
         phone = value
     }
 
-    fun updateEmail(value: String) {
-        email = value
-    }
-
     fun loadProfile() {
 
         viewModelScope.launch {
-
             profileRepository
                 .getUserProfile()
-
                 .onSuccess { user ->
-
                     name = user.userName
                     dob = user.dob
                     gender = user.gender
                     state = user.residentState
                     phone = user.phoneNumber
-                    email = user.email
+                    email =
+                        user.email.ifBlank {
+                            profileRepository.getCurrentUserEmail()
+                        }
                 }
         }
     }
@@ -83,7 +79,6 @@ class ProfileViewModel @Inject constructor(
     ) {
 
         viewModelScope.launch {
-
             val userModel = UserModel(
                 userName = name,
                 dob = dob,
@@ -92,17 +87,12 @@ class ProfileViewModel @Inject constructor(
                 phoneNumber = phone,
                 email = email
             )
-
             profileRepository
                 .saveUserProfile(userModel)
-
                 .onSuccess {
-
                     onSuccess()
                 }
-
                 .onFailure {
-
                     onFailure(
                         it.message ?: "Failed"
                     )

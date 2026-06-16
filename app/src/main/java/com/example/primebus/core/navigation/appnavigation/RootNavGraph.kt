@@ -1,6 +1,5 @@
 package com.example.primebus.core.navigation.appnavigation
 
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -13,7 +12,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.primebus.core.navigation.SearchScreen
 import com.example.primebus.core.navigation.bottomnavigation.BottomNavigationBar
 import com.example.primebus.features.auth.presentation.GoogleAuthHelper
 import com.example.primebus.features.auth.presentation.LoginScreen
@@ -46,7 +44,6 @@ import kotlinx.serialization.json.Json
 fun RootNavigation() {
 
     val navController = rememberNavController()
-
     val authViewModel: AuthViewModel = hiltViewModel()
 
     val startDestination =
@@ -57,24 +54,21 @@ fun RootNavigation() {
         }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-
     val currentRoute = navBackStackEntry?.destination?.route
 
     val bottomBarRoutes = listOf(
         NavRoutes.Home.route,
-        NavRoutes.Search.route,
+        NavRoutes.Help.route,
         NavRoutes.Profile.route,
         NavRoutes.Trips.route
     )
 
     val showBottomBar = currentRoute in bottomBarRoutes
 
-    val fixedDensity = remember { Resources.getSystem().displayMetrics.density }
-
     CompositionLocalProvider(
         LocalDensity provides Density(
-            LocalDensity.current.density,
-            fontScale = 1f
+                LocalDensity.current.density,
+                fontScale = 1f
         )
     ) {
         Scaffold(
@@ -84,61 +78,38 @@ fun RootNavigation() {
                     visible = showBottomBar
                 )
             }
-        )
-        { paddingValues ->
+        ){ paddingValues ->
 
             NavHost(
-                modifier = Modifier.padding(paddingValues),
                 navController = navController,
-                startDestination = startDestination
-            ) {
-
+                startDestination = startDestination,
+                modifier = Modifier.padding(paddingValues)
+            ){
                 // ================= AUTH GRAPH =================
-
-                navigation(
-                    route = NavGraph.AUTH,
-                    startDestination = NavRoutes.Login.route
-                ) {
+                navigation(route = NavGraph.AUTH, startDestination = NavRoutes.Login.route) {
 
                     composable(NavRoutes.Login.route) {
-
-                        val googleAuthHelper =
-                            remember { GoogleAuthHelper() }
-
+                        val googleAuthHelper = remember { GoogleAuthHelper() }
                         LoginScreen(
-
                             authViewModel = authViewModel,
-
                             googleAuthHelper = googleAuthHelper,
-
                             onLoginSuccess = {
-
                                 navController.navigate(NavGraph.MAIN) {
-
                                     popUpTo(NavGraph.AUTH) {
                                         inclusive = true
                                     }
-
                                     launchSingleTop = true
                                 }
                             },
-
                             onNavigateToOtp = { phone ->
-
                                 navController.navigate(
                                     NavRoutes.OtpScreen.createPhoneRoute(phone)
                                 )
                             }
                         )
                     }
-
-                    composable(
-                        route = NavRoutes.OtpScreen.route
-                    ) { backStackEntry ->
-
-                        val phone =
-                            backStackEntry.arguments?.getString("phone") ?: ""
-
+                    composable(route = NavRoutes.OtpScreen.route) { backStackEntry ->
+                        val phone = backStackEntry.arguments?.getString("phone") ?: ""
                         OTPScreen(
                             navController = navController,
                             phone = phone
@@ -147,129 +118,88 @@ fun RootNavigation() {
                 }
 
                 // ================= MAIN GRAPH =================
-
-                navigation(
-                    route = NavGraph.MAIN,
-                    startDestination = NavRoutes.Home.route
-                ) {
+                navigation(route = NavGraph.MAIN, startDestination = NavRoutes.Home.route) {
 
                     composable(NavRoutes.Home.route) {
-
                         HomeScreen(
-
                             onSearchClick = { tripRequest ->
                                 navController.navigate(
-                                    NavRoutes.Bus.createRoute(tripRequest)  // ✅ pass whole object
+                                    NavRoutes.Bus.createRoute(tripRequest)
                                 )
-
+                            },
+                            onNotificationClick = {
+                                navController.navigate(NavRoutes.Notifications.route)
                             }
                         )
                     }
-
-                    composable(NavRoutes.Search.route) {
-
-                        SearchScreen()
+                    composable(NavRoutes.Help.route) {
+                        HelpCenterScreen(navController)
                     }
 
-                    // ================= PROFILE =================
-
-                    navigation(
-                        route = NavGraph.PROFILE,
-                        startDestination = NavRoutes.Profile.route
-                    )
-                    {
+                    // ================= PROFILE GRAPH =================
+                    navigation(route = NavGraph.PROFILE, startDestination = NavRoutes.Profile.route) {
 
                         composable(NavRoutes.Profile.route) {
-
                             ProfileScreen(
-
                                 navController = navController,
-
                                 onLogOut = {
-
                                     authViewModel.logout()
-
                                     navController.navigate(NavGraph.AUTH) {
-
                                         popUpTo(NavGraph.MAIN) {
                                             inclusive = true
                                         }
-
                                         launchSingleTop = true
                                     }
                                 }
                             )
                         }
-
                         composable(NavRoutes.Passengers.route) {
                             SavedPassengersScreen(navController)
                         }
-
                         composable(NavRoutes.Offers.route) {
                             OffersScreen(navController)
                         }
-
                         composable(NavRoutes.EditProfile.route) {
                             EditProfileScreen(navController)
                         }
-
                         composable(NavRoutes.PaymentMethods.route) {
                             PaymentMethodScreen(navController)
                         }
-
                         composable(NavRoutes.Notifications.route) {
-                            PlaceholderScreen("Notifications")
+                            NotificationScreen(navController)
                         }
-
                         composable(NavRoutes.HelpCenter.route) {
                             HelpCenterScreen(navController)
                         }
-
-                        composable(NavRoutes.ContactSupport.route) {
-                            ContactSupportScreen(navController)
+                        composable(NavRoutes.CustomerSupport.route) {
+                            CustomerSupportScreen(navController)
                         }
-
                         composable(NavRoutes.RefundPolicy.route) {
                             RefundPolicyScreen(navController)
                         }
-
                         composable(NavRoutes.PrivacyPolicy.route) {
                             PrivacyPolicyScreen(navController)
                         }
-
                         composable(NavRoutes.TermsConditions.route) {
                             TermsConditionsScreen(navController)
                         }
-
                         composable(NavRoutes.AboutPrimeBus.route) {
                             AboutPrimeBusScreen(navController)
                         }
                     }
 
-                    // ================= TRIPS =================
-
-                    navigation(
-                        route = NavGraph.TRIPS,
-                        startDestination = NavRoutes.Trips.route
-                    )
-                    {
+                    // ================= TRIPS GRAPH =================
+                    navigation(route = NavGraph.TRIPS, startDestination = NavRoutes.Trips.route) {
 
                         composable(NavRoutes.Trips.route) { backStackEntry ->
-
-                            val vm: BookedTripsViewModel =
-                                backStackEntry.sharedViewModel(navController)
-
+                            val vm: BookedTripsViewModel = backStackEntry.sharedViewModel(navController)
                             BookedTripsScreen(
                                 navController = navController,
                                 viewModel = vm
                             )
                         }
-
                         composable(NavRoutes.TicketCard.route) { backStackEntry ->
-
-                            val vm: BookedTripsViewModel =
-                                backStackEntry.sharedViewModel(navController)
-
+                            val vm: BookedTripsViewModel = backStackEntry.sharedViewModel(navController)
                             BusTicketCard(
                                 viewModel = vm,
                                 navController = navController,
@@ -280,65 +210,34 @@ fun RootNavigation() {
                         }
                     }
 
-                    // ================= BOOKING =================
-
-                    navigation(
-                        route = NavGraph.BOOKING,
-                        startDestination = NavRoutes.Bus.route
-                    )
-                    {
+                    // ================= BOOKING GRAPH =================
+                    navigation(route = NavGraph.BOOKING, startDestination = NavRoutes.Bus.route) {
 
                         composable(NavRoutes.Bus.route) { backStackEntry ->
                             val vm: BookingViewModel = backStackEntry.sharedViewModel(navController)
-
                             val json = backStackEntry.arguments?.getString("tripRequest")
-
                             LaunchedEffect(json) {
-
-                                if (
-                                    json != null &&
-                                    vm.tripRequest.value == null
-                                ) {
-
-                                    val decoded =
-                                        Uri.decode(json)
-
-                                    val request =
-                                        Json.decodeFromString<TripRequest>(
-                                            decoded
-                                        )
-
+                                if (json != null && vm.tripRequest.value == null) {
+                                    val decoded = Uri.decode(json)
+                                    val request = Json.decodeFromString<TripRequest>(decoded)
                                     vm.setTripRequest(request)
-
-                                    Log.d(
-                                        "TripRequest",
-                                        request.toString()
-                                    )
+                                    Log.d("TripRequest", request.toString())
                                 }
                             }
-
                             BusScreen(
                                 bookingViewModel = vm,
                                 navController = navController
                             )
                         }
-
                         composable(NavRoutes.Seat.route) { backStackEntry ->
-
-                            val vm: BookingViewModel =
-                                backStackEntry.sharedViewModel(navController)
-
+                            val vm: BookingViewModel = backStackEntry.sharedViewModel(navController)
                             BusSeatScreen(
                                 bookingViewModel = vm,
                                 navController = navController
                             )
                         }
-
                         composable(NavRoutes.Checkout.route) { backStackEntry ->
-
-                            val vm: BookingViewModel =
-                                backStackEntry.sharedViewModel(navController)
-
+                            val vm: BookingViewModel = backStackEntry.sharedViewModel(navController)
                             CheckoutScreen(
                                 bookingViewModel = vm,
                                 navController = navController,
@@ -347,10 +246,12 @@ fun RootNavigation() {
                                 }
                             )
                         }
-
-                        composable(NavRoutes.BookingSuccess.route) {
-
-                            BookingSuccessScreen(navController)
+                        composable(NavRoutes.BookingSuccess.route) {backStackEntry ->
+                            val vm: BookingViewModel = backStackEntry.sharedViewModel(navController)
+                            BookingSuccessScreen(
+                                bookingViewModel = vm,
+                                navController = navController
+                            )
                         }
                     }
                 }

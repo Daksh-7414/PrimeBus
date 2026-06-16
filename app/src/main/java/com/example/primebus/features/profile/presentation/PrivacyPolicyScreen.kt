@@ -37,8 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
+import com.example.primebus.ui.theme.gradientBrush
 
 @Preview(showBackground = true)
 @Composable
@@ -201,14 +200,6 @@ fun PrivacyPolicyScreen(navController: NavHostController) {
                 }
             }
             item {
-                val gradientBrush  = Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF0D247C), // dark blue
-                        Color(0xFF6F3BD5)  // purple
-                    ),
-                    start = Offset(0f, 0f),
-                    end = Offset(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY)
-                )
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -317,8 +308,8 @@ fun ExpandableSection(
 ) {
     var expanded by remember { mutableStateOf(initiallyExpanded) }
 
-    Column(modifier = modifier.clip(RoundedCornerShape(20.dp))   // rounds the corners
-        .background(Color.White)){           // white background) {
+    Column(modifier = modifier.clip(RoundedCornerShape(20.dp))
+        .background(Color.White)){
         Row(
             modifier = Modifier
                 .fillMaxWidth()

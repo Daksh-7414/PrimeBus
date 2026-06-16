@@ -26,58 +26,38 @@ class AuthRepository @Inject constructor(
     }
 
     // ================= OTP LOGIN =================
-
     suspend fun loginWithOtp(): Result<Unit> {
-
         return try {
-
             firebaseAuth.signInAnonymously().await()
-
             Result.success(Unit)
-
         } catch (e: Exception) {
-
             Result.failure(e)
         }
     }
 
     // ================= GOOGLE LOGIN =================
-
-    suspend fun signInWithGoogle(
-        idToken: String
-    ): Result<Unit> {
-
+    suspend fun signInWithGoogle(idToken: String): Result<Unit> {
         return try {
-
-            val credential =
-                GoogleAuthProvider.getCredential(idToken, null)
-
+            val credential = GoogleAuthProvider.getCredential(idToken, null)
             firebaseAuth.signInWithCredential(credential).await()
-
             Result.success(Unit)
-
         } catch (e: Exception) {
-
             Result.failure(e)
         }
     }
 
     // ================= AUTH STATE =================
-
     fun isUserLoggedIn(): Boolean {
-
         return firebaseAuth.currentUser != null
     }
 
+    // ================= CURRENT USER UID =================
     fun getCurrentUserId(): String? {
-
         return firebaseAuth.currentUser?.uid
     }
 
     // ================= LOGOUT =================
-
     fun logout() {
-
         firebaseAuth.signOut()
     }
 }

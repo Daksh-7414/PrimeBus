@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
+import com.example.primebus.ui.theme.gradientBrush
 
 @Preview
 @Composable
@@ -60,8 +61,8 @@ fun PaymentMethodScreen(navController: NavHostController) {
         )
         LazyColumn(
             modifier = Modifier
-                .weight(1f)          // Takes all remaining space
-                .fillMaxWidth(),     // Keep full width
+                .weight(1f)
+                .fillMaxWidth(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -161,26 +162,18 @@ fun PaymentMethodScreen(navController: NavHostController) {
             verticalAlignment = Alignment.Bottom
         )
         {
-            val gradientBrush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xFF00236F), // dark blue
-                    Color(0xFF5929C9)  // purple
-                ),
-                start = Offset(50f, 1000f),   // bottom-left (in pixels)
-                end = Offset(1000f, 500f)      // top-right
-            )
             Button(
                 onClick = { },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent, // important: let the background brush show
+                    containerColor = Color.Transparent,
                     contentColor = Color.White
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
                         brush = gradientBrush,
-                        shape = RoundedCornerShape(20.dp) // match button shape for clip
+                        shape = RoundedCornerShape(20.dp)
                     ),
                 contentPadding = PaddingValues( vertical = 16.dp)
             ){

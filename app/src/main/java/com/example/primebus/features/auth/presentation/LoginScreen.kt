@@ -1,6 +1,7 @@
 package com.example.primebus.features.auth.presentation
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,6 +50,8 @@ import androidx.compose.ui.unit.sp
 import com.example.primebus.R
 import com.example.primebus.features.auth.viewmodels.AuthState
 import com.example.primebus.features.auth.viewmodels.AuthViewModel
+import com.example.primebus.features.home.presentation.AppLoadingScreen
+import com.example.primebus.ui.theme.gradientBrush
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,23 +75,18 @@ fun LoginScreen(
 
     LoginScreenContent(
         state = state,
-
         onGoogleClick = {
             CoroutineScope(Dispatchers.Main).launch {
                 try {
-                    val idToken =
-                        googleAuthHelper.getGoogleIdToken(context)
-
+                    val idToken = googleAuthHelper.getGoogleIdToken(context)
                     if (idToken != null) {
                         authViewModel.signInWithGoogle(idToken)
                     }
-
                 } catch (e: Exception) {
                     Log.d("Auth", e.message ?: "Error")
                 }
             }
         },
-
         onContinuePhone = { phone ->
             authViewModel.sendOtp(phone)
             onNavigateToOtp(phone)
@@ -98,21 +96,18 @@ fun LoginScreen(
     LaunchedEffect(state) {
         when (state) {
             is AuthState.Loading -> {
-                //CircularProgressIndicator()
+//                AppLoadingScreen("Logging...")
             }
 
             is AuthState.Success -> {
                 onLoginSuccess()
-
                 authViewModel.resetState()
             }
 
-//            is AuthState.Error -> {
-//                Text(
-//                    text = (state as AuthState.Error).message,
-//                    color = Color.Red
-//                )
-//            }
+            is AuthState.Error -> {
+                val message = (state as AuthState.Error).message
+                Log.d("Auth", message)
+            }
 
             else -> Unit
         }
@@ -122,7 +117,7 @@ fun LoginScreen(
 fun LoginScreenContent(
     state: AuthState = AuthState.Idle,
     onGoogleClick: () -> Unit = {},
-    onContinuePhone: (String) -> Unit   // still expects a String
+    onContinuePhone: (String) -> Unit
 ) {
 
     LazyColumn(
@@ -143,7 +138,7 @@ fun LoginScreenContent(
 
             Text(
                 text = "Welcome to PrimeBus",
-                fontSize = 28.sp,
+                fontSize = 22.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.inter))
@@ -154,7 +149,7 @@ fun LoginScreenContent(
 
             Text(
                 text = "Book buses easily across cities",
-                fontSize = 16.sp,
+                fontSize = 14.sp,
                 color = Color.Gray,
                 fontWeight = FontWeight.Normal,
                 fontFamily = FontFamily(Font(R.font.inter))
@@ -178,7 +173,7 @@ fun LoginScreenContent(
 
             Text(
                 text = "By continuing, you agree to PrimeBus Terms \n of Service & Privacy Policy",
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(top = 8.dp),
                 textAlign = TextAlign.Center,
@@ -190,7 +185,7 @@ fun LoginScreenContent(
 
             Text(
                 text = "PrimeBus",
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -202,7 +197,7 @@ fun LoginScreenContent(
 
             Text(
                 text = "© 2026 PrimeBus Kinetic Gallery",
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 color = Color.LightGray,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.SemiBold,
@@ -217,15 +212,16 @@ fun PhoneNumberUI(
     onContinuePhone: (String) -> Unit
 ) {
     var phone by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(28.dp)
+            .padding(20.dp)
     ) {
         Text(
             text = "Mobile Number",
-            fontSize = 15.sp,
+            fontSize = 14.sp,
             color = Color.DarkGray,
             fontWeight = FontWeight.SemiBold,
             fontFamily = FontFamily(Font(R.font.inter))
@@ -249,7 +245,7 @@ fun PhoneNumberUI(
                     fontSize = 16.sp,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.SemiBold,
                     fontFamily = FontFamily(Font(R.font.inter))
                 )
             }
@@ -265,17 +261,36 @@ fun PhoneNumberUI(
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { onContinuePhone(phone) },
-            modifier = Modifier.height(55.dp).fillMaxWidth(),
-            shape = RoundedCornerShape(13.dp),
+            onClick = {
+                if (phone.isBlank()) {
+                    Toast.makeText(
+                        context,
+                        "Enter phone number",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@Button
+                }
+                if (phone.length != 10) {
+                    Toast.makeText(
+                        context,
+                        "Phone number should be 10 digits",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@Button
+                }
+
+                onContinuePhone(phone)
+            },
+            modifier = Modifier.height(50.dp).fillMaxWidth()
+                .background(gradientBrush, shape = RoundedCornerShape(13.dp)),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF6366F1)
+                containerColor = Color.Transparent
             )
         )
         {
             Text(
                 "Continue with Phone",
-                fontSize = 18.sp,
+                fontSize = 15.sp,
                 color = Color.White,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,
@@ -283,7 +298,7 @@ fun PhoneNumberUI(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -296,6 +311,7 @@ fun PhoneNumberUI(
             )
             Text(
                 text = "OR",
+                fontSize = 12.sp,
                 color = Color.Gray,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.inter)),
@@ -307,11 +323,11 @@ fun PhoneNumberUI(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             onClick = onGoogleClick,
-            modifier = Modifier.height(55.dp).fillMaxWidth(),
+            modifier = Modifier.height(50.dp).fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
             border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
             colors = ButtonDefaults.buttonColors(
@@ -322,12 +338,12 @@ fun PhoneNumberUI(
             Image(
                 painter = painterResource(id = R.drawable.google_icon),
                 contentDescription = "Google Icon",
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 "Continue with Google",
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Bold,

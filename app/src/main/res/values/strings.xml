@@ -9,5 +9,6 @@
     <string name="booked">Booked</string>
     <string name="ladies">Ladies</string>
     <string name="front">FRONT</string>
+    <string name="booking_success"><font color='#444651'>You can view your ticket anytime from <font color='#00236F'>My Trips</font>.</font></string>
     <string name="default_web_client_id">243729078478-ereucrleof6anfeu270kdp479u8fihir.apps.googleusercontent.com</string>
 </resources>

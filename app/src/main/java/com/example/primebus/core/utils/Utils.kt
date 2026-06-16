@@ -8,9 +8,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 
 @Composable
-inline fun <reified VM : ViewModel> NavBackStackEntry.sharedViewModel(
-    navController: NavHostController
-): VM {
+inline fun <reified VM : ViewModel> NavBackStackEntry.sharedViewModel(navController: NavHostController)
+: VM {
     val navGraphRoute = destination.parent?.route
         ?: error("No parent navigation graph found for ${destination.route}")
 

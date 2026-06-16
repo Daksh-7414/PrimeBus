@@ -23,7 +23,6 @@ class MainActivity : ComponentActivity(), PaymentResultListener {
     companion object {
         private const val TAG = "MainActivity"
     }
-
     var paymentSuccessCallback: ((String) -> Unit)? = null
     var paymentErrorCallback:   ((String) -> Unit)? = null
 
@@ -53,7 +52,6 @@ class MainActivity : ComponentActivity(), PaymentResultListener {
             return
         }
 
-        // Forward paymentId to the lambda stored by RazorpayManager
         paymentSuccessCallback?.invoke(p0)
         clearCallbacks()
     }
@@ -62,18 +60,16 @@ class MainActivity : ComponentActivity(), PaymentResultListener {
         Log.e(TAG, "onPaymentError: code=$p0 | response=$p1")
 
         val reason = when (p0) {
-            0    -> "Payment cancelled"
-            1    -> "Network error. Check your connection and try again."
-            2    -> "Invalid payment options"
+            0 -> "Payment cancelled"
+            1 -> "Network error. Check your connection and try again."
+            2 -> "Invalid payment options"
             else -> p1 ?: "Payment failed (code $p0)"
         }
 
-        // Forward error reason to the lambda stored by RazorpayManager
         paymentErrorCallback?.invoke(reason)
         clearCallbacks()
     }
 
-    // ── Prevent stale callbacks on next payment session ───────────────────────
     private fun clearCallbacks() {
         paymentSuccessCallback = null
         paymentErrorCallback   = null
@@ -82,18 +78,13 @@ class MainActivity : ComponentActivity(), PaymentResultListener {
 
 @Composable
 fun AppNavigator() {
-
     var showSplash by remember { mutableStateOf(true) }
-
     if (showSplash) {
-
         Splash()
-
         LaunchedEffect(Unit) {
             delay(2000)
             showSplash = false
         }
-
     } else {
         RootNavigation()
     }

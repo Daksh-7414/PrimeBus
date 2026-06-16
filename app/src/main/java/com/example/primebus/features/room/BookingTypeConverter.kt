@@ -9,59 +9,31 @@ class BookingTypeConverter {
 
     private val gson = Gson()
 
-    // ==========================
-    // Seats List<String>
-    // ==========================
-
     @TypeConverter
-    fun fromSeatsList(
-        seats: List<String>
-    ): String {
-
+    fun fromSeatsList(seats: List<String>): String {
         return gson.toJson(seats)
-
     }
 
     @TypeConverter
-    fun toSeatsList(
-        seatsString: String
-    ): List<String> {
-
-        val type =
-            object : TypeToken<List<String>>() {}.type
-
+    fun toSeatsList(seatsString: String): List<String> {
+        val type = object : TypeToken<List<String>>() {}.type
         return gson.fromJson(
             seatsString,
             type
         )
-
     }
 
-    // ==========================
-    // Passenger List<Passenger>
-    // ==========================
-
     @TypeConverter
-    fun fromPassengerList(
-        passengers: List<Passenger>
-    ): String {
-
+    fun fromPassengerList(passengers: List<Passenger>): String {
         return gson.toJson(passengers)
-
     }
 
     @TypeConverter
-    fun toPassengerList(
-        passengersString: String
-    ): List<Passenger> {
-
-        val type =
-            object : TypeToken<List<Passenger>>() {}.type
-
+    fun toPassengerList(passengersString: String): List<Passenger> {
+        val type = object : TypeToken<List<Passenger>>() {}.type
         return gson.fromJson(
             passengersString,
             type
         )
-
     }
 }

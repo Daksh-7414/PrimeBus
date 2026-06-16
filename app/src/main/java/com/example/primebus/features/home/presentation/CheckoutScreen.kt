@@ -44,6 +44,7 @@ import com.example.primebus.data.models.Passenger
 import com.example.primebus.data.models.SeatModel
 import com.example.primebus.features.home.viewmodels.BookingViewModel
 import com.example.primebus.features.payment.RazorpayManager
+import com.example.primebus.ui.theme.gradientBrush
 
 @Preview
 @Composable
@@ -513,9 +514,8 @@ fun CheckoutScreenContent(
             }
             Button(
                 onClick = onProceedClick,
-                modifier = Modifier.weight(1.5f),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3D3BC4)),
+                modifier = Modifier.weight(1.5f).background(gradientBrush,RoundedCornerShape(16.dp)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
             ) {
                 Text(

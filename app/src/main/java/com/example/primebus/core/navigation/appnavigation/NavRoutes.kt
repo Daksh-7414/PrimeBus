@@ -12,13 +12,16 @@ sealed class NavRoutes(val route: String) {
     data object OtpScreen : NavRoutes("otp_screen/{phone}") {
         fun createPhoneRoute(phone: String): String = "otp_screen/$phone"
     }
+
     // MAIN GRAPH
     data object Home : NavRoutes("home")
-    data object Search : NavRoutes("search")
+    data object Help : NavRoutes("help")
     data object Profile : NavRoutes("profile")
     data object Trips : NavRoutes("trips")
+
     // TRIPS GRAPH
     data object TicketCard : NavRoutes("ticket_screen")
+
     // BOOKING GRAPH
     data object Bus : NavRoutes("bus_screen/{tripRequest}") {
         fun createRoute(tripRequest: TripRequest): String {
@@ -30,6 +33,7 @@ sealed class NavRoutes(val route: String) {
     data object Seat : NavRoutes("seat_screen")
     data object Checkout : NavRoutes("checkout_screen")
     data object BookingSuccess : NavRoutes("booking_success")
+
     // PROFILE GRAPH
     data object MyTrips : NavRoutes("my_trips")
     data object Passengers : NavRoutes("passengers")
@@ -38,7 +42,7 @@ sealed class NavRoutes(val route: String) {
     data object PaymentMethods : NavRoutes("payment_methods")
     data object Notifications : NavRoutes("notifications")
     data object HelpCenter : NavRoutes("help_center")
-    data object ContactSupport : NavRoutes("contact_support")
+    data object CustomerSupport : NavRoutes("customer_support")
     data object RefundPolicy : NavRoutes("refund_policy")
     data object PrivacyPolicy : NavRoutes("privacy_policy")
     data object TermsConditions : NavRoutes("terms_conditions")

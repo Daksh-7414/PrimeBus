@@ -35,13 +35,10 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -114,7 +111,7 @@ fun OffersTypes(
 ){
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))   // rounds the corners
+            .clip(RoundedCornerShape(20.dp))
             .background(Color.White)
             .padding(16.dp)
     ) {
@@ -140,7 +137,7 @@ fun OffersTypes(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = FontFamily(Font(R.font.inter)),
-                        color = Color(0xFF1E293B),      // dark slate for better contrast
+                        color = Color(0xFF1E293B),
                         letterSpacing = 0.5.sp
                     )
                 }
@@ -176,7 +173,7 @@ fun OffersTypes(
                 onClick = { },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFE8EEF9), // important: let the background brush show
+                    containerColor = Color(0xFFE8EEF9),
                     contentColor = Color(0xFF00236F)
                 ),
                 contentPadding = PaddingValues(horizontal = 25.dp, vertical = 0.dp)

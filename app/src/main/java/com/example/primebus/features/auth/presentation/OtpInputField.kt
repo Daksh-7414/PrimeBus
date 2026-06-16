@@ -73,6 +73,7 @@ import com.example.primebus.features.profile.presentation.PrivacyToolBar
 import com.example.primebus.ui.theme.PrimeBusTheme
 import com.example.primebus.features.auth.viewmodels.AuthState
 import com.example.primebus.features.auth.viewmodels.AuthViewModel
+import com.example.primebus.ui.theme.gradientBrush
 import kotlinx.coroutines.delay
 
 @Composable
@@ -170,7 +171,7 @@ fun OTPScreenContent(
 
                 Text(
                     text = "Verification Code",
-                    fontSize = 25.sp,
+                    fontSize = 22.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily(Font(R.font.inter))
@@ -180,7 +181,7 @@ fun OTPScreenContent(
 
                 Text(
                     text = "Enter the OTP sent to +91 $maskedPhone",
-                    fontSize = 16.sp,
+                    fontSize = 14.sp,
                     color = Color.Gray,
                     fontWeight = FontWeight.Normal,
                     fontFamily = FontFamily(Font(R.font.inter))
@@ -202,31 +203,23 @@ fun OTPScreenContent(
                     Spacer(modifier = Modifier.height(26.dp))
                     Text(
                         text = "Resend OTP",
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
                         fontFamily = FontFamily(Font(R.font.inter)),
                         modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color(0xFFE7E6E6))
                             .clickable { onResendOtp() }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(horizontal = 15.dp, vertical = 6.dp)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    val gradientBrush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFF00236F),
-                            Color(0xFF5929C9)
-                        ),
-                        start = Offset(50f, 1000f),
-                        end = Offset(1000f, 500f)
-                    )
                     Button(
                         onClick = {
                             onVerifyOtp(otp)
                         },
                         enabled = otp.length == 4,
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent ),
-                        contentPadding = PaddingValues(10.dp,16.dp),
+                        contentPadding = PaddingValues(10.dp,15.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
@@ -235,7 +228,7 @@ fun OTPScreenContent(
                     ) {
                         Text(
                             text = "Verify & Continue",
-                            fontSize = 18.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             fontFamily = FontFamily(Font(R.font.inter))
@@ -253,7 +246,7 @@ fun OTPScreenContent(
             item {
                 Text(
                     text = "By continuing, you agree to PrimeBus Terms \n of Service & Privacy Policy",
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     color = Color.Gray,
                     modifier = Modifier.padding(top = 8.dp),
                     textAlign = TextAlign.Center,
@@ -261,11 +254,11 @@ fun OTPScreenContent(
                     fontFamily = FontFamily(Font(R.font.inter))
                 )
 
-                Spacer(modifier = Modifier.height(28.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = "PrimeBus",
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.Bold,
@@ -273,11 +266,11 @@ fun OTPScreenContent(
                     fontFamily = FontFamily(Font(R.font.inter))
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
                     text = "© 2026 PrimeBus Kinetic Gallery",
-                    fontSize = 16.sp,
+                    fontSize = 15.sp,
                     color = Color.LightGray,
                     textAlign = TextAlign.Center,
                     fontWeight = FontWeight.SemiBold,
@@ -358,7 +351,7 @@ fun OtpCharacter(
     )
     Box(
         modifier = modifier
-            .size(60.dp)
+            .size(50.dp)
             .clip(shape)
             .border(borderStroke, color = colorStroke, shape = shape)
             .background(Color.White),

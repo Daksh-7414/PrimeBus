@@ -46,7 +46,6 @@ class BookingViewModel @Inject constructor(
             return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(millis))
         }
 
-    // ── Bus selection ────────────────────────────────────────────
     private val _selectedBus = MutableStateFlow<Bus?>(null)
     val selectedBus = _selectedBus.asStateFlow()
 
@@ -63,6 +62,9 @@ class BookingViewModel @Inject constructor(
 
     private val _passengers = MutableStateFlow<List<Passenger>>(emptyList())
     val passengers = _passengers.asStateFlow()
+
+    private val _booking = MutableStateFlow<Booking?>(null)
+    val booking = _booking.asStateFlow()
 
     fun createPassengersFromSeats() {
         val seats = _selectedSeats.value
@@ -121,7 +123,7 @@ class BookingViewModel @Inject constructor(
         val dateStr = journeyDateStr
         if (dateStr.isEmpty()) return onFailure("Invalid journey date")
         Log.d("payment id in booking viewmodel","booking viewmodel ${paymentId}")
-        val booking = Booking(
+        val _booking = Booking(
             userId = uid,
             busId = bus.busId,
             busName = bus.busName,
@@ -138,13 +140,12 @@ class BookingViewModel @Inject constructor(
             contactEmail = _contactEmail.value,
             paymentId = paymentId
         )
-        Log.d("payment id in booking viewmodel","booking viewmodel ${booking.paymentId}")
-        Log.d("payment id in booking viewmodel","booking viewmodel ${booking}")
+
 
         viewModelScope.launch {
             val result = bookingRepository.confirmBooking(
                 userId  = uid,
-                booking = booking
+                booking = _booking
             )
             result.onSuccess { bookingId ->
                 clearBooking()
@@ -154,6 +155,10 @@ class BookingViewModel @Inject constructor(
                 onFailure(e.message ?: "Booking failed")
             }
         }
+    }
+
+    fun giveBookingObject(booking: Booking): Booking {
+        return booking
     }
 
     fun clearBooking() {

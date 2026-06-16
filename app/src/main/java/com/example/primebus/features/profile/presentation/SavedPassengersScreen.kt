@@ -41,8 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -56,6 +54,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
 import com.example.primebus.data.models.Passenger
+import com.example.primebus.ui.theme.gradientBrush
 
 @Preview
 @Composable
@@ -78,15 +77,6 @@ fun SavedPassengersScreen(navController: NavHostController) {
             Passenger("2", "L2", "Aman", "24", "Male")
         )
     }
-
-    val gradientBrush = Brush.linearGradient(
-        colors = listOf(
-            Color(0xFF00236F),
-            Color(0xFF5929C9)
-        ),
-        start = Offset(50f, 1000f),
-        end = Offset(1000f, 500f)
-    )
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -231,7 +221,7 @@ fun AddPassengerBottomSheet(
     var gender by remember { mutableStateOf("Male") }
 
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,  // 👈 start fully expanded
+        skipPartiallyExpanded = true,
         confirmValueChange = { true }
     )
 
@@ -280,7 +270,6 @@ fun AddPassengerBottomSheet(
                 onValueChange = { name = it },
                 icon = Icons.Outlined.Person,
                 placeholder = "Enter Name",
-                keyboardType = KeyboardType.Text
             )
 
             Spacer(Modifier.height(16.dp))
@@ -299,7 +288,7 @@ fun AddPassengerBottomSheet(
                 onValueChange = { age = it },
                 icon = Icons.Outlined.Cake,
                 placeholder = "Enter Age",
-                keyboardType = KeyboardType.Number
+                keyboardType = KeyboardType.Number,
             )
 
             Spacer(Modifier.height(16.dp))
@@ -336,14 +325,6 @@ fun AddPassengerBottomSheet(
             }
 
             Spacer(Modifier.height(20.dp))
-            val gradientBrush = Brush.linearGradient(
-                colors = listOf(
-                    Color(0xFF00236F),
-                    Color(0xFF5929C9)
-                ),
-                start = Offset(50f, 1000f),
-                end = Offset(1000f, 500f)
-            )
             Button(
                 onClick = {
                     val passenger = Passenger(

@@ -20,9 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,8 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
+import com.example.primebus.ui.theme.gradientBrush
 
 @Preview(showBackground = true)
 @Composable
@@ -55,6 +56,41 @@ private fun HelpCenterScreenPreview() {
     )
 }
 
+@Preview
+@Composable
+private fun HelpScreenToolBarPreview() {
+    HelpScreenToolBar(
+        {}
+    )
+}
+
+@Composable
+fun HelpScreenToolBar(onBackClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp, 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Help Center",
+            fontSize = 20.sp,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.inter))
+        )
+        IconButton(onClick = onBackClick) {
+            Icon(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = "Refresh",
+                modifier = Modifier.size(28.dp)
+            )
+        }
+    }
+}
+
 @Composable
 fun HelpCenterScreen(navController: NavHostController) {
     Column(
@@ -62,10 +98,7 @@ fun HelpCenterScreen(navController: NavHostController) {
             .fillMaxSize()
             .background(Color(0xFFF0F3F9))
     ) {
-        PrivacyToolBar(
-            title = "Help Center",
-            onBackClick={navController.popBackStack()}
-        )
+        HelpScreenToolBar({})
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
@@ -78,22 +111,23 @@ fun HelpCenterScreen(navController: NavHostController) {
                         .fillMaxWidth()
                         .clip(RoundedCornerShape(20.dp))
                         .background(Color(0xFFFEFEFE))
-                        .padding(16.dp),
+                        .padding(20.dp),
                     verticalArrangement = Arrangement.Center
                 )
                 {
                     Text(
                         text = "How can we help you?",
-                        fontSize = 18.sp,
+                        fontSize = 21.sp,
                         color = Color(0xFF012470),
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily(Font(R.font.inter))
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "Find quick answers for booking, cancellation, refund, and payment issues.",
-                        fontSize = 14.sp,
+                        text = "Find quick answers for booking,\ncancellation, refund, and \npayment issues.",
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
+                        maxLines = 3,
                         fontFamily = FontFamily(Font(R.font.inter))
                     )
                 }
@@ -103,7 +137,7 @@ fun HelpCenterScreen(navController: NavHostController) {
                     text = "Quick Categories",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.Gray,
+                    color = Color.Black,
                     fontFamily = FontFamily(Font(R.font.inter))
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -156,6 +190,14 @@ fun HelpCenterScreen(navController: NavHostController) {
                 }
             }
             item {
+                Text(
+                    text = "Popular FAQs",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.Black,
+                    fontFamily = FontFamily(Font(R.font.inter))
+                )
+                Spacer(modifier = Modifier.height(12.dp))
                 FaqSection(
                     title = "How do I track my bus in real-time?",
                 ) {
@@ -211,7 +253,7 @@ fun HelpCenterScreen(navController: NavHostController) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(20.dp))   // rounds the corners
+                        .clip(RoundedCornerShape(20.dp))
                         .background(Color.White)
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -224,20 +266,11 @@ fun HelpCenterScreen(navController: NavHostController) {
                         fontFamily = FontFamily(Font(R.font.inter)),
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    val gradientBrush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFF00236F), // dark blue
-                            Color(0xFF5929C9)  // purple
-                        ),
-                        start = Offset(50f, 1000f),   // bottom-left (in pixels)
-                        end = Offset(1000f, 500f)      // top-right
-                    )
-
                     Button(
                         onClick = { },
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent, // important: let the background brush show
+                            containerColor = Color.Transparent,
                             contentColor = Color.White
                         ),
                         modifier = Modifier
@@ -285,8 +318,10 @@ fun QuickHelpOption(
         Box(
             modifier = Modifier
                 .size(40.dp)
-                .background(Color(0xFFDCE1FF),
-                    RoundedCornerShape(12.dp)),
+                .background(
+                    Color(0xFFDCE1FF),
+                    RoundedCornerShape(12.dp)
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(
@@ -317,8 +352,9 @@ fun FaqSection(
 ) {
     var expanded by remember { mutableStateOf(initiallyExpanded) }
 
-    Column(modifier = modifier.clip(RoundedCornerShape(20.dp))   // rounds the corners
-        .background(Color.White)){           // white background) {
+    Column(modifier = modifier
+        .clip(RoundedCornerShape(20.dp))
+        .background(Color.White)){
         Row(
             modifier = Modifier
                 .fillMaxWidth()

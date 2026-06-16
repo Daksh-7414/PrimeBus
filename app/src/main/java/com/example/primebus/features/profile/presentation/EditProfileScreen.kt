@@ -18,9 +18,8 @@ import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -33,9 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
 import com.example.primebus.features.profile.viewmodels.ProfileViewModel
+import com.example.primebus.ui.theme.gradientBrush
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -58,7 +57,6 @@ private fun EditProfileScreenPreview() {
         onGenderChange = {},
         onStateChange = {},
         onPhoneChange = {},
-        onEmailChange = {},
         onSaveProfile = {},
         onBackClick = {}
     )
@@ -70,13 +68,10 @@ fun EditProfileScreen(
     navController: NavHostController,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
-
     LaunchedEffect(Unit) {
         viewModel.loadProfile()
     }
-
     EditProfileContent(
         name = viewModel.name,
         dob = viewModel.dob,
@@ -84,31 +79,22 @@ fun EditProfileScreen(
         state = viewModel.state,
         phone = viewModel.phone,
         email = viewModel.email,
-
         onNameChange = viewModel::updateName,
         onDobChange = viewModel::updateDob,
         onGenderChange = viewModel::updateGender,
         onStateChange = viewModel::updateState,
         onPhoneChange = viewModel::updatePhone,
-        onEmailChange = viewModel::updateEmail,
-
         onSaveProfile = {
-
             viewModel.saveProfile(
-
                 onSuccess = {
-
                     Toast.makeText(
                         context,
                         "Profile Saved",
                         Toast.LENGTH_SHORT
                     ).show()
-
-//                    navController.popBackStack()
+                    navController.popBackStack()
                 },
-
                 onFailure = {
-
                     Toast.makeText(
                         context,
                         it,
@@ -117,7 +103,6 @@ fun EditProfileScreen(
                 }
             )
         },
-
         onBackClick = {
             navController.popBackStack()
         }
@@ -127,42 +112,47 @@ fun EditProfileScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EditProfileContent(
-
     name: String,
     dob: String,
     gender: String,
     state: String,
     phone: String,
     email: String,
-
     onNameChange: (String) -> Unit,
     onDobChange: (String) -> Unit,
     onGenderChange: (String) -> Unit,
     onStateChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
-    onEmailChange: (String) -> Unit,
-
     onSaveProfile: () -> Unit,
     onBackClick: () -> Unit
 
 ) {
 
-    // ORIGINAL VALUES STORE
-    val originalName = remember { name }
-    val originalDob = remember { dob }
-    val originalGender = remember { gender }
-    val originalState = remember { state }
-    val originalPhone = remember { phone }
-    val originalEmail = remember { email }
+    var originalName by rememberSaveable { mutableStateOf("") }
+    var originalDob by rememberSaveable { mutableStateOf("") }
+    var originalGender by rememberSaveable { mutableStateOf("") }
+    var originalState by rememberSaveable { mutableStateOf("") }
+    var originalPhone by rememberSaveable { mutableStateOf("") }
 
-    // CHECK ANY VALUE CHANGED
+    var initialLoaded by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(name, dob, gender, state, phone, email) {
+        if (!initialLoaded && email.isNotBlank()) {
+            originalName = name
+            originalDob = dob
+            originalGender = gender
+            originalState = state
+            originalPhone = phone
+            initialLoaded = true
+        }
+    }
+
     val isProfileChanged =
         name != originalName ||
                 dob != originalDob ||
                 gender != originalGender ||
                 state != originalState ||
-                phone != originalPhone ||
-                email != originalEmail
+                phone != originalPhone
 
     Column(
         modifier = Modifier
@@ -199,18 +189,9 @@ fun EditProfileContent(
                     phoneNumber = phone,
                     onPhoneChange = onPhoneChange,
                     email = email,
-                    onEmailChange = onEmailChange
                 )
             }
         }
-        val gradientBrush = Brush.linearGradient(
-            colors = listOf(
-                Color(0xFF00236F),
-                Color(0xFF5929C9)
-            ),
-            start = Offset(50f, 1000f),
-            end = Offset(1000f, 500f)
-        )
         Button(
             onClick = {
                 if (isProfileChanged) {
@@ -225,6 +206,7 @@ fun EditProfileContent(
                     brush = gradientBrush,
                     shape = RoundedCornerShape(20.dp)
                 ),
+
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
@@ -251,7 +233,7 @@ fun CustomInputField(
     placeholder: String,
     keyboardType: KeyboardType = KeyboardType.Text,
     readOnly: Boolean = false,
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
 
     OutlinedTextField(
@@ -335,7 +317,7 @@ fun PersonalDetailsCard(
                 value = name,
                 onValueChange = onNameChange,
                 icon = Icons.Outlined.PersonOutline,
-                placeholder = "Full Name"
+                placeholder = "Full Name",
             )
             Box(
                 modifier = Modifier
@@ -348,7 +330,7 @@ fun PersonalDetailsCard(
                     icon = Icons.Outlined.CalendarMonth,
                     placeholder = "YYYY-MM-DD",
                     readOnly = true,
-                    enabled = false
+                    enabled = false,
                 )
             }
 
@@ -425,7 +407,6 @@ fun PersonalDetailsCard(
             }
         }
     }
-    // DATE PICKER FIXED HERE
     if (showDatePicker) {
         DatePickerDialog(
             onDismissRequest = {
@@ -476,7 +457,6 @@ fun ContactDetailsCard(
     phoneNumber: String,
     onPhoneChange: (String) -> Unit,
     email: String,
-    onEmailChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -590,14 +570,17 @@ fun ContactDetailsCard(
                 onValueChange = onPhoneChange,
                 icon = Icons.Outlined.Phone,
                 placeholder = "+91 9876543210",
-                keyboardType = KeyboardType.Phone
+                keyboardType = KeyboardType.Phone,
             )
+
             CustomInputField(
                 value = email,
-                onValueChange = onEmailChange,
+                onValueChange = {},
                 icon = Icons.Outlined.Email,
                 placeholder = "name@example.com",
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                readOnly = true,
+                enabled = false
             )
         }
     }

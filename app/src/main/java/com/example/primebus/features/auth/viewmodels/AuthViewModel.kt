@@ -18,9 +18,7 @@ sealed class AuthState {
 
     object Success : AuthState()
 
-    data class Error(
-        val message: String
-    ) : AuthState()
+    data class Error(val message: String) : AuthState()
 }
 
 @HiltViewModel
@@ -28,54 +26,36 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _state =
-        MutableStateFlow<AuthState>(AuthState.Idle)
-
+    private val _state = MutableStateFlow<AuthState>(AuthState.Idle)
     val state = _state.asStateFlow()
 
     // ================= CHECK AUTH =================
-
     fun checkAuthStatus(): Boolean {
-
         return authRepository.isUserLoggedIn()
     }
 
     // ================= USER =================
-
     fun getUserId(): String? {
-
         return authRepository.getCurrentUserId()
     }
 
     // ================= LOGOUT =================
-
     fun logout() {
-
         authRepository.logout()
-
         _state.value = AuthState.Idle
     }
 
     // ================= GOOGLE LOGIN =================
-
     fun signInWithGoogle(
         idToken: String
     ) {
-
         viewModelScope.launch {
-
             _state.value = AuthState.Loading
-
-            val result =
-                authRepository.signInWithGoogle(idToken)
-
+            val result = authRepository.signInWithGoogle(idToken)
             result.onSuccess {
-
                 _state.value = AuthState.Success
             }
-
             result.onFailure {
-
                 _state.value =
                     AuthState.Error(
                         it.message ?: "Google Login Failed"
@@ -85,53 +65,36 @@ class AuthViewModel @Inject constructor(
     }
 
     // ================= OTP =================
-
     fun initOtp(context: Context) {
-
         authRepository.initOtp(context)
     }
 
     fun sendOtp(phone: String) {
-
         authRepository.sendOtp(phone)
     }
 
     fun verifyOtp(otp: String) {
-
         viewModelScope.launch {
-
             _state.value = AuthState.Loading
-
             if (authRepository.verifyOtp(otp)) {
-
-                val result =
-                    authRepository.loginWithOtp()
-
+                val result = authRepository.loginWithOtp()
                 result.onSuccess {
-
                     _state.value = AuthState.Success
                 }
-
                 result.onFailure {
-
                     _state.value =
                         AuthState.Error(
                             it.message ?: "OTP Login Failed"
                         )
                 }
-
             } else {
-
-                _state.value =
-                    AuthState.Error("Invalid OTP")
+                _state.value = AuthState.Error("Invalid OTP")
             }
         }
     }
 
     // ================= RESET STATE =================
-
     fun resetState() {
-
         _state.value = AuthState.Idle
     }
 }

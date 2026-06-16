@@ -249,8 +249,8 @@ fun RefundTypes(
 ){
     Column(
         modifier = Modifier
-            .clip(RoundedCornerShape(20.dp))   // rounds the corners
-            .background(Color(0xFFEEF4FC))            // white background
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color(0xFFEEF4FC))
     ) {
         Row(
             modifier = Modifier

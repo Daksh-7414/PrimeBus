@@ -1,5 +1,6 @@
 package com.example.primebus.features.booking.presentation
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -7,24 +8,24 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.outlined.DirectionsBusFilled
-import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -36,12 +37,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.primebus.R
+import com.example.primebus.TicketPdfGenerator
 import com.example.primebus.core.utils.Constants.convenienceFee
 import com.example.primebus.core.utils.Constants.gst
 import com.example.primebus.data.models.Booking
 import com.example.primebus.data.models.Bus
 import com.example.primebus.data.models.Passenger
 import com.example.primebus.features.booking.viewmodels.BookedTripsViewModel
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,7 +57,6 @@ fun BusTicketCard(
     onBackClick: () -> Unit
 ) {
     val trip by viewModel.selectedTrip.collectAsState()
-
     trip?.let { bookedTrip ->
         BusTicketCardContent(
             bus = bookedTrip.bus,
@@ -62,21 +64,31 @@ fun BusTicketCard(
             onBackClick={navController.popBackStack()}
         )
     }
-
 }
 
 @Composable
 fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
-    Column()
-    {
-        BookedToolbar("My Ticket",onBackClick,{})
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    Column{
+        BookedToolbar("My Ticket",onBackClick,{},{
+            scope.launch {
+                val success = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                    TicketPdfGenerator.generateAndSave(context, bus, booking)
+                }
+                Toast.makeText(
+                    context,
+                    if (success) "Ticket saved to Downloads!" else "Failed to save PDF",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(12.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             item {
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
@@ -129,8 +141,6 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                             .background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Bus name,type
-
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -164,7 +174,7 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                                         BorderStroke(1.dp, Color(0xFF287145)),
                                         RoundedCornerShape(20.dp)
                                     )
-                                    .padding(10.dp,5.dp)
+                                    .padding(10.dp, 5.dp)
                             ) {
                                 Text(
                                     text = "CONFIRMED",
@@ -175,8 +185,6 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                                 )
                             }
                         }
-
-                        // Route
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -245,7 +253,6 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
 
                         Spacer(modifier = Modifier.height(10.dp))
 
-                        // Date
                         Row(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
@@ -255,7 +262,7 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                         )
                         {
                             Text(
-                                text = booking.journeyDate?.let { millis ->
+                                text = booking.journeyDate.let { millis ->
                                     SimpleDateFormat("EEE, dd MMM yyyy", Locale.ENGLISH).apply {
                                         timeZone = TimeZone.getTimeZone("UTC")
                                     }.format(Date(millis))
@@ -269,7 +276,6 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
 
                         Spacer(modifier = Modifier.height(4.dp))
 
-                        // Departure & Arrival & Duration
                         Row(
                             horizontalArrangement = Arrangement.SpaceAround,
                             modifier = Modifier
@@ -297,7 +303,9 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                                 )
                             }
                             VerticalDivider(
-                                modifier = Modifier.height(50.dp).background(Color.LightGray)
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .background(Color.LightGray)
                             )
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
@@ -316,7 +324,9 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                                 )
                             }
                             VerticalDivider(
-                                modifier = Modifier.height(50.dp).background(Color.LightGray)
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .background(Color.LightGray)
                             )
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
@@ -338,12 +348,10 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
 
                         Spacer(modifier = Modifier.height(12.dp))
 
-                        // ----- Dashed Divider (simple full width) -----
                         DashedDivider()
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-//                RouteTimeline()
                         Row(
                             modifier = Modifier,
                             verticalAlignment = Alignment.CenterVertically
@@ -351,7 +359,7 @@ fun BusTicketCardContent(bus: Bus, booking: Booking,onBackClick: () -> Unit,) {
                         {
                             Spacer(modifier = Modifier.width(12.dp))
                             RouteTimeline()
-                            Column() {
+                            Column{
                                 Row(
                                     horizontalArrangement = Arrangement.SpaceAround,
                                     modifier = Modifier
@@ -540,15 +548,11 @@ fun RouteTimeline() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Top stop
         StopCircle(
             outerColor = Color(0xFFE5E7EB),
             innerColor = Color(0xFF0B3D91)
         )
-
         DashedVerticalLine()
-
-        // Bottom stop
         StopCircle(
             outerColor = Color(0xFFEDE9FE),
             innerColor = Color(0xFF7C3AED)
@@ -664,9 +668,9 @@ fun BookedToolbar(
         }
         IconButton(onClick = onDownloadClick) {
             Icon(
-                imageVector = Icons.Outlined.Download, // Add an icon to your resources
+                imageVector = Icons.Default.FileDownload,
                 contentDescription = "Download PDF",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(28.dp)
             )
         }
     }
@@ -720,15 +724,20 @@ fun PassengeCard(
     passenger: Passenger,
 ) {
 
+    val initials = passenger.name
+        .split(" ")
+        .mapNotNull { it.firstOrNull()?.toString() }
+        .take(2)
+        .joinToString("")
     Card(
         shape = RoundedCornerShape(28.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         modifier = Modifier.fillMaxWidth()
     ) {
-
-        // 🔹 Header
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -741,7 +750,7 @@ fun PassengeCard(
             )
             {
                 Text(
-                    text = "DS",
+                    text = initials,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )
@@ -789,7 +798,6 @@ fun PassengeCard(
         }
     }
 }
-// ========== Reusable Components ==========
 
 @Composable
 fun DashedDivider(
@@ -797,7 +805,7 @@ fun DashedDivider(
     color: Color = Color(0xFFCBD5E1)
 ) {
     TicketDivider(
-        backgroundColor = Color(0xFFF6F9FF) // screen bg color
+        backgroundColor = Color(0xFFF6F9FF)
     )
 }
 
@@ -821,7 +829,6 @@ fun TicketDivider(
 
         val centerY = size.height / 2
 
-        // Dashed line
         var startX = radiusPx
 
         while (startX < size.width - radiusPx) {
@@ -834,14 +841,12 @@ fun TicketDivider(
             startX += dashWidthPx + dashGapPx
         }
 
-        // Left circular cutout
         drawCircle(
             color = backgroundColor,
             radius = radiusPx,
             center = Offset(0f, centerY)
         )
 
-        // Right circular cutout
         drawCircle(
             color = backgroundColor,
             radius = radiusPx,
@@ -850,9 +855,6 @@ fun TicketDivider(
     }
 }
 
-
-
-// ========== Preview ==========
 @Preview(showBackground = true)
 @Composable
 fun PreviewBusTicketCard() {
@@ -867,14 +869,14 @@ fun PreviewBusTicketCard() {
             Passenger(
                 seatId = "1",
                 seatNumber = "L1",
-                name = "Rahul",
+                name = "Rahul Singh",
                 age = "22",
                 gender = "Male"
             ),
             Passenger(
                 seatId = "2",
                 seatNumber = "L2",
-                name = "Aman",
+                name = "Daksh Singh",
                 age = "24",
                 gender = "Male"
             )

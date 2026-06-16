@@ -44,6 +44,7 @@ class BookingRepository @Inject constructor(
 
             val updates = mutableMapOf<String, Any?>()
             updates["$userId/$bookingId"] = finalBooking.toMap()
+
             finalBooking.seats.forEach { seatNumber ->
                 updates["seatLocks/${booking.busId}/${booking.journeyDateStr}/$seatNumber"] = null
             }
@@ -56,33 +57,25 @@ class BookingRepository @Inject constructor(
         }
     }
 
-    fun getUserBookings(
-        userId: String,
-        isOnline: Boolean
+    fun getUserBookings(userId: String, isOnline: Boolean
     ): Flow<AppResult<List<BookedTripUiModel>>> = flow {
 
         emit(AppResult.Loading)
-
         if (isOnline) {
             CoroutineScope(Dispatchers.IO).launch {
                 fetchFromFirebaseAndCache(userId)
             }
         }
-
         bookingDao
             .getBookingsWithBus()
             .collect { trips ->
-
                 when {
-
                     trips.isNotEmpty() -> {
                         emit(AppResult.Success(trips))
                     }
-
                     !isOnline -> {
                         emit(AppResult.NoInternet)
                     }
-
                     else -> {
                         emit(AppResult.Success(emptyList()))
                     }

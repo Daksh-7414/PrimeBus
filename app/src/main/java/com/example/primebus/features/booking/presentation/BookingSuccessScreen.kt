@@ -30,45 +30,162 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
 import com.example.primebus.core.navigation.appnavigation.NavGraph
 import com.example.primebus.core.navigation.appnavigation.NavRoutes
+import com.example.primebus.data.models.Booking
+import com.example.primebus.data.models.Bus
+import com.example.primebus.data.models.Passenger
+import com.example.primebus.features.home.viewmodels.BookingViewModel
 import com.example.primebus.features.profile.presentation.PrivacyToolBar
+import com.example.primebus.ui.theme.gradientBrush
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Preview
 @Composable
 private fun BookingSuccessScreenPreview() {
-    val navController = rememberNavController()
-    BookingSuccessScreen(navController = navController)
+    val mockBooking = Booking(
+        userId = "USER1",
+        bookingId = "BK123",
+        busId = "BUS1",
+        busName = "Rajasthan Express",
+        seats = listOf("L1", "L2"),
+        passengers = listOf(
+            Passenger(
+                seatId = "1",
+                seatNumber = "L1",
+                name = "Rahul Singh",
+                age = "22",
+                gender = "Male"
+            ),
+            Passenger(
+                seatId = "2",
+                seatNumber = "L2",
+                name = "Daksh Singh",
+                age = "24",
+                gender = "Male"
+            )
+        ),
+        totalAmount = 1444.0,
+        journeyDate = System.currentTimeMillis(),
+        timestamp = System.currentTimeMillis(),
+        paymentId = "pay_T0bdIqOykTJYNq"
+    )
+    val mockBus = Bus(
+        busId = "BUS1",
+        busName = "Rajasthan Express",
+        type = "AC Sleeper",
+        rating = 4.2,
+        price = 799.0,
+        departureTime = "08:00 AM",
+        arrivalTime = "10:30 AM",
+        duration = "2h 30m",
+        source = "Ajmer",
+        destination = "Jaipur",
+        operator = "RSRTC",
+        boardingPoint = "Ajmer (Bus Stand)",
+        droppingPoint = "Jaipur (Sindhi Camp)"
+    )
+    BookingSuccessScreenContent(
+        mockBus,
+        mockBooking,
+        {},
+        {},
+        {},
+        {}
+    )
 }
 
 @Composable
-fun BookingSuccessScreen(navController: NavHostController) {
+fun BookingSuccessScreen(
+    bookingViewModel: BookingViewModel,
+    navController: NavHostController
+) {
+    val booking by bookingViewModel.booking.collectAsState()
+    val bus by bookingViewModel.selectedBus.collectAsState()
 
+    BookingSuccessScreenContent(
+        bus = bus,
+        booking = booking,
+        onBackClick = {
+            navController.popBackStack(
+                route = NavGraph.BOOKING,
+                inclusive = true
+            )
+        },
+        onViewTicketClick = {
+            navController.navigate(NavRoutes.TicketCard.route)
+        },
+        onHomeClick = {
+            navController.popBackStack(
+                route = NavGraph.BOOKING,
+                inclusive = true
+            )
+        },
+        onTripsClick = {
+            navController.navigate(NavGraph.TRIPS){
+                popUpTo(NavGraph.BOOKING) {
+                    inclusive = true
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun BookingSuccessScreenContent(
+    bus: Bus?,
+    booking: Booking?,
+    onBackClick: () -> Unit,
+    onViewTicketClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onTripsClick: () -> Unit,
+) {
+    val date = booking?.journeyDate?.let { millis ->
+        SimpleDateFormat(
+            "EEE, dd MMM yyyy",
+            Locale.ENGLISH
+        ).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }.format(Date(millis))
+    } ?: "Date not available"
     Column(
-        modifier = Modifier.fillMaxSize().background(Color(0xFFF5F8FE))
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F8FE))
     ) {
         PrivacyToolBar(
             title = "Booked Confirmed",
-            onBackClick={navController.popBackStack()}
+            onBackClick={onBackClick}
         )
         LazyColumn(
             contentPadding = PaddingValues(12.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         )
         {
             item {
@@ -117,10 +234,10 @@ fun BookingSuccessScreen(navController: NavHostController) {
             item {
                 Column(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(20.dp))   // rounds the corners
+                        .clip(RoundedCornerShape(20.dp))
                         .background(Color.White)
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)// white background
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Row(
                         modifier = Modifier
@@ -143,7 +260,9 @@ fun BookingSuccessScreen(navController: NavHostController) {
                             )
                         }
                         Column(
-                            modifier = Modifier.weight(1f).padding(start = 10.dp)
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 10.dp)
                         ) {
                             Text(
                                 text = "Payment Successful",
@@ -152,7 +271,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                 fontFamily = FontFamily(Font(R.font.inter))
                             )
                             Text(
-                                text = "Transaction ID: 1234567890",
+                                text = "Transaction ID: ${booking?.paymentId}",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Normal,
                                 fontFamily = FontFamily(Font(R.font.inter)),
@@ -187,7 +306,9 @@ fun BookingSuccessScreen(navController: NavHostController) {
                             )
                         }
                         Column(
-                            modifier = Modifier.weight(1f).padding(start = 10.dp)
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 10.dp)
                         ) {
                             Text(
                                 text = "Seat Reserved",
@@ -196,7 +317,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                 fontFamily = FontFamily(Font(R.font.inter))
                             )
                             Text(
-                                text = "Seat No: L1",
+                                text = "Seat No: ${booking?.seats?.joinToString(", ")}",
                                 fontSize = 13.sp,
                                 fontWeight = FontWeight.Normal,
                                 fontFamily = FontFamily(Font(R.font.inter)),
@@ -226,7 +347,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                             .fillMaxWidth()
                             .padding(16.dp)
                     ) {
-                        // Row 1: Bus name + Confirm Status
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -237,14 +358,14 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = "Operator",
+                                    text = bus?.operator ?: "Operator",
                                     fontSize = 13.sp,
                                     color = Color.Gray,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = FontFamily(Font(R.font.inter))
                                 )
                                 Text(
-                                    text = "Rajasthan Express",
+                                    text = bus?.busName ?: "Bus Name",
                                     fontSize = 18.sp,
                                     color = Color(0xFF00236F),
                                     fontWeight = FontWeight.Bold,
@@ -252,14 +373,15 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                 )
                             }
                             Row(
-                                modifier = Modifier.wrapContentWidth()
-                                    .background(Color(0xFF1E3A8A), RoundedCornerShape(16.dp))
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .background(gradientBrush, RoundedCornerShape(16.dp))
                                     .padding(horizontal = 14.dp, vertical = 4.dp),
                                 horizontalArrangement = Arrangement.End
                             ) {
 
                                 Text(
-                                    text = "2 Seats",
+                                    text = "${booking?.seats?.count().toString()} seats",
                                     color = Color.White,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.SemiBold,
@@ -271,24 +393,24 @@ fun BookingSuccessScreen(navController: NavHostController) {
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Row 2: Dropping & Boarding Details
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically   // ← align all children vertically
+                            verticalAlignment = Alignment.CenterVertically
                         )
                         {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = "Ajmer",
+                                    text = bus?.source ?: "Ajmer",
                                     fontSize = 17.sp,
                                     color = Color.DarkGray,
                                     fontWeight = FontWeight.SemiBold,
                                     fontFamily = FontFamily(Font(R.font.inter))
                                 )
-                                Spacer(modifier = Modifier.height(2.dp))   // optional spacing
+                                Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "08:30 AM",
+                                    text = bus?.departureTime ?: "08:00 AM",
                                     fontSize = 18.sp,
                                     color = Color(0xFF00236F),
                                     fontWeight = FontWeight.SemiBold,
@@ -308,7 +430,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                     modifier = Modifier.size(24.dp)
                                 )
                                 Text(
-                                    text = "24 Mar 2026",
+                                    text = date,
                                     fontSize = 12.sp,
                                     color = Color.DarkGray,
                                     fontWeight = FontWeight.SemiBold,
@@ -320,7 +442,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                 horizontalAlignment = Alignment.End
                             ) {
                                 Text(
-                                    text = "Jaipur",
+                                    bus?.destination ?: "Jaipur",
                                     fontSize = 17.sp,
                                     color = Color.DarkGray,
                                     fontWeight = FontWeight.SemiBold,
@@ -328,7 +450,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
-                                    text = "10:45 AM",
+                                    text = bus?.arrivalTime ?: "10:45 AM",
                                     fontSize = 18.sp,
                                     color = Color(0xFF00236F),
                                     fontWeight = FontWeight.SemiBold,
@@ -345,9 +467,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Button(
-                        onClick = {
-                            navController.navigate(NavRoutes.TicketCard.route)
-                        },
+                        onClick = { onViewTicketClick },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
@@ -358,7 +478,9 @@ fun BookingSuccessScreen(navController: NavHostController) {
                     )
                     {
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.RemoveRedEye,
@@ -376,12 +498,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                         }
                     }
                     Button(
-                        onClick = {
-                            navController.popBackStack(
-                                route = NavGraph.BOOKING,
-                                inclusive = true
-                            )
-                        },
+                        onClick = { onHomeClick },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
@@ -411,9 +528,7 @@ fun BookingSuccessScreen(navController: NavHostController) {
                         }
                     }
                     Button(
-                        onClick = {
-                            navController.navigate(NavGraph.TRIPS)
-                        },
+                        onClick = { onTripsClick },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
@@ -443,6 +558,32 @@ fun BookingSuccessScreen(navController: NavHostController) {
                         }
                     }
                 }
+            }
+            item {
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                color = Color.Gray
+                            )
+                        ) {
+                            append("You can view your ticket anytime from ")
+                        }
+                        withStyle(
+                            style = SpanStyle(
+                                color = Color(0xFF00236F),
+                                fontWeight = FontWeight.Bold
+                            )
+                        ) {
+                            append(" My Trips")
+                        }
+                        append(".")
+                    },
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = FontFamily(Font(R.font.inter))
+                )
             }
         }
     }

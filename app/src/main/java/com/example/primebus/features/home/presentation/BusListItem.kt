@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.primebus.R
 import com.example.primebus.data.models.Bus
+import com.example.primebus.ui.theme.gradientBrush
 
 @Composable
 fun BusListItem(
@@ -59,7 +60,7 @@ fun BusListItem(
                 Row(
                     modifier = Modifier.weight(2f)
                 ) {
-                    Column() {
+                    Column {
                         Text(
                             text = bus.busName,
                             fontSize = 18.sp,
@@ -181,17 +182,18 @@ fun BusListItem(
                         onViewSeatsClick(bus)
                     },
                     modifier = Modifier
-                        .height(45.dp).width(125.dp),
-                    shape = RoundedCornerShape(16.dp),
+                        .height(45.dp)
+                        .width(125.dp)
+                        .background(brush = gradientBrush, shape = RoundedCornerShape(16.dp)),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF3D3BC4)
+                        containerColor = Color.Transparent,
                     )
                 ) {
                     Text(
                         text = "View Seats",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White, // Blue color
+                        color = Color.White,
                         fontFamily = FontFamily(Font(R.font.inter)),
                     )
                 }
