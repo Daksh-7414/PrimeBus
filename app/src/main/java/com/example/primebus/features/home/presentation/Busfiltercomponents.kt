@@ -296,7 +296,6 @@ fun BusFilterBottomSheet(
             HorizontalDivider()
             Spacer(modifier = Modifier.height(8.dp))
 
-            // ── Rating Section ──
             Text(
                 text = "MINIMUM RATING",
                 fontSize = 12.sp,
@@ -424,9 +423,6 @@ private fun RatingOptionChip(
     }
 }
 
-/**
- * Sort options bottom sheet — radio-button style single selection.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusSortBottomSheet(
