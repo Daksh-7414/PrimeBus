@@ -122,8 +122,10 @@ class BookingViewModel @Inject constructor(
 
         val dateStr = journeyDateStr
         if (dateStr.isEmpty()) return onFailure("Invalid journey date")
-        Log.d("payment id in booking viewmodel","booking viewmodel ${paymentId}")
-        val _booking = Booking(
+
+        Log.d("payment id in booking viewmodel", "booking viewmodel ${paymentId}")
+
+        val newBooking = Booking(
             userId = uid,
             busId = bus.busId,
             busName = bus.busName,
@@ -141,14 +143,15 @@ class BookingViewModel @Inject constructor(
             paymentId = paymentId
         )
 
-
         viewModelScope.launch {
             val result = bookingRepository.confirmBooking(
                 userId  = uid,
-                booking = _booking
+                booking = newBooking
             )
             result.onSuccess { bookingId ->
-                clearBooking()
+
+                _booking.value = newBooking
+
                 onSuccess(bookingId)
             }
             result.onFailure { e ->
@@ -168,5 +171,6 @@ class BookingViewModel @Inject constructor(
         _passengers.value    = emptyList()
         _contactPhone.value  = ""
         _contactEmail.value  = ""
+        _booking.value       = null
     }
 }

@@ -44,6 +44,64 @@ val InterFont = FontFamily(
 )
 
 @Composable
+fun HomeScreen(
+    onSearchClick: (TripRequest) -> Unit ,
+    onNotificationClick: () -> Unit
+) {
+    val cityList = listOf(
+        "Jaipur", "Ajmer", "Kota"
+    )
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F8FE))
+            .padding(20.dp)
+    ) {
+        item {
+            Column {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Good Morning, Daksh 🛫",
+                            fontSize = 20.sp,
+                            fontFamily = InterFont,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "Where are you travelling today?",
+                            fontSize = 13.sp,
+                            fontFamily = InterFont,
+                            color = Color.Gray
+                        )
+                    }
+                    IconButton(onClick = onNotificationClick) {
+                        Icon(
+                            imageVector = Icons.Outlined.Notifications,
+                            contentDescription = "Notification",
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                BusSearchSection(
+                    cityList = cityList,
+                    onSearchClick = onSearchClick
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun LocationInputField(
     value: String,
     onValueChange: (String) -> Unit,
@@ -367,64 +425,6 @@ fun DatePickerModal(
             state = datePickerState,
             showModeToggle = false
         )
-    }
-}
-
-@Composable
-fun HomeScreen(
-    onSearchClick: (TripRequest) -> Unit ,
-    onNotificationClick: () -> Unit
-) {
-    val cityList = listOf(
-        "Jaipur", "Ajmer", "Kota"
-    )
-
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F8FE))
-            .padding(20.dp)
-    ) {
-        item {
-            Column {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(
-                            text = "Good Morning, Daksh 🛫",
-                            fontSize = 20.sp,
-                            fontFamily = InterFont,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "Where are you travelling today?",
-                            fontSize = 13.sp,
-                            fontFamily = InterFont,
-                            color = Color.Gray
-                        )
-                    }
-                    IconButton(onClick = onNotificationClick) {
-                        Icon(
-                            imageVector = Icons.Outlined.Notifications,
-                            contentDescription = "Notification",
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                BusSearchSection(
-                    cityList = cityList,
-                    onSearchClick = onSearchClick
-                )
-            }
-        }
     }
 }
 

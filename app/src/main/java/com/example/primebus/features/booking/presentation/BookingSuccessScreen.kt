@@ -21,23 +21,25 @@ import androidx.compose.material.icons.outlined.DirectionsBusFilled
 import androidx.compose.material.icons.outlined.EventSeat
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Payments
-import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.Wallet
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
@@ -48,12 +50,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.example.primebus.R
 import com.example.primebus.core.navigation.appnavigation.NavGraph
-import com.example.primebus.core.navigation.appnavigation.NavRoutes
 import com.example.primebus.data.models.Booking
 import com.example.primebus.data.models.Bus
 import com.example.primebus.data.models.Passenger
@@ -115,7 +114,6 @@ private fun BookingSuccessScreenPreview() {
         mockBooking,
         {},
         {},
-        {},
         {}
     )
 }
@@ -128,26 +126,42 @@ fun BookingSuccessScreen(
     val booking by bookingViewModel.booking.collectAsState()
     val bus by bookingViewModel.selectedBus.collectAsState()
 
+    var isNavigating by remember { mutableStateOf(false) }
+
+    if (isNavigating) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+        return
+    }
+
     BookingSuccessScreenContent(
         bus = bus,
         booking = booking,
         onBackClick = {
+            isNavigating = true
+            bookingViewModel.clearBooking()
             navController.popBackStack(
                 route = NavGraph.BOOKING,
                 inclusive = true
             )
         },
-        onViewTicketClick = {
-            navController.navigate(NavRoutes.TicketCard.route)
-        },
+
         onHomeClick = {
+            isNavigating = true
+            bookingViewModel.clearBooking()
             navController.popBackStack(
                 route = NavGraph.BOOKING,
                 inclusive = true
             )
         },
         onTripsClick = {
-            navController.navigate(NavGraph.TRIPS){
+            isNavigating = true
+            bookingViewModel.clearBooking()
+            navController.navigate(NavGraph.TRIPS) {
                 popUpTo(NavGraph.BOOKING) {
                     inclusive = true
                 }
@@ -155,13 +169,11 @@ fun BookingSuccessScreen(
         }
     )
 }
-
 @Composable
 fun BookingSuccessScreenContent(
     bus: Bus?,
     booking: Booking?,
     onBackClick: () -> Unit,
-    onViewTicketClick: () -> Unit,
     onHomeClick: () -> Unit,
     onTripsClick: () -> Unit,
 ) {
@@ -180,7 +192,7 @@ fun BookingSuccessScreenContent(
     ) {
         PrivacyToolBar(
             title = "Booked Confirmed",
-            onBackClick={onBackClick}
+            onBackClick= onBackClick
         )
         LazyColumn(
             contentPadding = PaddingValues(12.dp),
@@ -464,41 +476,10 @@ fun BookingSuccessScreenContent(
             item {
                 Row(
                     Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Button(
-                        onClick = { onViewTicketClick },
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White,
-                            contentColor = Color(0xFF1E3A8A)
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        contentPadding = PaddingValues(16.dp)
-                    )
-                    {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.RemoveRedEye,
-                                contentDescription = "Icon",
-                                tint = Color(0xFF1E3A8A),
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Text(
-                                "View Ticket",
-                                fontSize = 13.sp,
-                                color = Color(0xFF00236F),
-                                fontWeight = FontWeight.SemiBold,
-                                fontFamily = FontFamily(Font(R.font.inter))
-                            )
-                        }
-                    }
-                    Button(
-                        onClick = { onHomeClick },
+                        onClick = onHomeClick ,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,
@@ -528,7 +509,7 @@ fun BookingSuccessScreenContent(
                         }
                     }
                     Button(
-                        onClick = { onTripsClick },
+                        onClick =  onTripsClick ,
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White,

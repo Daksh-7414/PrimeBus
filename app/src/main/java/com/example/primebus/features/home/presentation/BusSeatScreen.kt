@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -375,10 +376,18 @@ fun BusSeatContent(
                         enabled = selectedCount > 0,
                         modifier = Modifier
                             .weight(1.5f)
-                            .background(gradientBrush, RoundedCornerShape(16.dp)),
-                        colors = ButtonDefaults.buttonColors(Color.Transparent),
+                            .background(
+                                brush = if (selectedCount > 0) gradientBrush else Brush.linearGradient(
+                                    colors = listOf(Color.LightGray, Color.LightGray)
+                                ),
+                                shape = RoundedCornerShape(16.dp)
+                            ),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent
+                        ),
                         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 12.dp)
-                    ) {
+                    )  {
                         Text(
                             "Proceed",
                             fontSize = 18.sp,

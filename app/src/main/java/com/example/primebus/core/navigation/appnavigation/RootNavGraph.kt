@@ -246,7 +246,8 @@ fun RootNavigation() {
                                 }
                             )
                         }
-                        composable(NavRoutes.BookingSuccess.route) {backStackEntry ->
+
+                        composable(NavRoutes.BookingSuccess.route) { backStackEntry ->
                             val vm: BookingViewModel = backStackEntry.sharedViewModel(navController)
                             BookingSuccessScreen(
                                 bookingViewModel = vm,

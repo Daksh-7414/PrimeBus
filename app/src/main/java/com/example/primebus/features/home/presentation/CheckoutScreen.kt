@@ -159,9 +159,8 @@ fun CheckoutScreen(
                         paymentId = paymentId,
                         onSuccess = { bookingId ->
                             Log.d("Checkout", "Booking saved: bookingId=$bookingId")
-                            navController.navigate(NavRoutes.BookingSuccess.route) {
-                                popUpTo(NavGraph.BOOKING) { inclusive = true }
-                            }
+                            navController.navigate(NavRoutes.BookingSuccess.route)
+
                         },
                         onFailure = { error ->
                             Log.e("Checkout", "Booking save failed: $error | paymentId=$paymentId")
